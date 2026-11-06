@@ -485,7 +485,7 @@ function iniciarLightbox(corto) {
       <button class="lightbox__boton" type="button" data-accion="cerrar" aria-label="Cerrar" autofocus>×</button>
     </div>
     <figure class="lightbox__figura">
-      <img alt="" draggable="false">
+      <img alt="" draggable="false" loading="lazy">
     </figure>
     <div class="lightbox__controles">
       <button class="lightbox__boton" type="button" data-accion="anterior" aria-label="Fotograma anterior">←</button>

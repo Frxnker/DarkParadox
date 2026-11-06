@@ -568,6 +568,8 @@ html:not(.js) .menu__lista a {
   }
 
   .menu__lista a {
+    justify-content: center;
+    min-width: var(--tactil);
     min-height: var(--tactil);
     font-family: var(--fuente-texto);
     font-size: 1rem;
@@ -958,6 +960,11 @@ html:not(.js) .menu__lista a {
 }
 
 /* Reproductor responsive 16:9 */
+.video-16-9,
+.trailer-pendiente {
+  max-width: 60rem;
+}
+
 .video-16-9 {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -1090,7 +1097,7 @@ html:not(.js) .menu__lista a {
 }
 
 .lightbox::backdrop {
-  background: rgba(5, 5, 6, 0.96);
+  background: var(--negro);
 }
 
 .lightbox__barra {
@@ -1343,7 +1350,8 @@ a.canal:hover {
   color: var(--gris);
 }
 
-.canal--pendiente .canal__valor {
+.canal--pendiente .canal__valor,
+.canal__valor[data-pendiente] {
   color: var(--gris);
 }
 
