@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contacto · Dark Paradox Studios</title>
+  <meta name="description" content="Escribe a Dark Paradox Studios por email, WhatsApp o Instagram.">
+  <meta name="theme-color" content="#0a0a0b">
+
+  <!-- Open Graph: la imagen TIENE que ser una URL completa. Cambia "usuario" por tu usuario de GitHub. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Dark Paradox Studios">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Contacto · Dark Paradox Studios">
+  <meta property="og:description" content="Escribe a Dark Paradox Studios por email, WhatsApp o Instagram.">
+  <meta property="og:image" content="https://usuario.github.io/darkparadox-web/img/og-image.jpg">
+
+  <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&amp;family=Source+Sans+3:wght@400;600&amp;family=Special+Elite&amp;display=swap">
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <script>document.documentElement.classList.add("js");</script>
+  <script src="./js/data.js" defer></script>
+  <script src="./js/main.js" defer></script>
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <header class="cabecera">
+    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio">
+      <img class="marca__icono" src="./img/logo.svg" alt="" width="30" height="30" loading="lazy">
+      <span class="marca__texto glitch" data-texto="Dark Paradox">Dark Paradox</span>
+    </a>
+
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+      <span class="menu-boton__barras" aria-hidden="true"></span>
+    </button>
+
+    <nav class="menu" id="menu-principal" aria-label="Principal">
+      <ul class="menu__lista">
+        <li><a href="./index.html">Inicio</a></li>
+        <li><a href="./cortos.html">Cortos</a></li>
+        <li><a href="./proximamente.html">Próximamente</a></li>
+        <li><a href="./estudio.html">Estudio</a></li>
+        <li><a href="./contacto.html" aria-current="page">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+    <div class="contenedor">
+      <div class="cabecera-pagina">
+        <h1>Contacto</h1>
+        <p class="texto-ancho texto-secundario">
+          Para colaborar, programar un corto o contarnos algo raro que te haya pasado.
+        </p>
+      </div>
+
+      <div class="contacto">
+        <!-- Email, WhatsApp y ciudad se rellenan desde CONTACTO, en js/data.js -->
+        <section aria-label="Canales de contacto">
+          <ul class="canales">
+            <li>
+              <a class="canal" href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">
+                <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.25" cy="6.75" r="0.75" fill="currentColor"/>
+                </svg>
+                <span>
+                  <span class="canal__tipo">Instagram</span>
+                  <span class="canal__valor">@darkparadox_studios_</span>
+                </span>
+              </a>
+            </li>
+
+            <li>
+              <a class="canal" data-contacto="email" hidden>
+                <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="14"/>
+                  <path d="m3 6 9 7 9-7"/>
+                </svg>
+                <span>
+                  <span class="canal__tipo">Email</span>
+                  <span class="canal__valor" data-valor-email></span>
+                </span>
+              </a>
+              <div class="canal canal--pendiente" data-pendiente="email" hidden>
+                <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="14"/>
+                  <path d="m3 6 9 7 9-7"/>
+                </svg>
+                <span>
+                  <span class="canal__tipo">Email</span>
+                  <span class="canal__valor">[email pendiente]</span>
+                </span>
+              </div>
+            </li>
+
+            <li>
+              <a class="canal" data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>
+                <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M4 20.5 5.3 16A8.5 8.5 0 1 1 8.4 19z"/>
+                </svg>
+                <span>
+                  <span class="canal__tipo">WhatsApp</span>
+                  <span class="canal__valor">Abrir conversación</span>
+                </span>
+              </a>
+              <div class="canal canal--pendiente" data-pendiente="whatsapp" hidden>
+                <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M4 20.5 5.3 16A8.5 8.5 0 1 1 8.4 19z"/>
+                </svg>
+                <span>
+                  <span class="canal__tipo">WhatsApp</span>
+                  <span class="canal__valor">[WhatsApp pendiente]</span>
+                </span>
+              </div>
+            </li>
+
+            <li>
+              <div class="canal">
+                <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M12 21.5s7-6.2 7-11.5a7 7 0 1 0-14 0c0 5.3 7 11.5 7 11.5z"/>
+                  <circle cx="12" cy="10" r="2.5"/>
+                </svg>
+                <span>
+                  <span class="canal__tipo">Ciudad</span>
+                  <span class="canal__valor" data-ciudad hidden></span>
+                  <span class="canal__valor" data-pendiente="ciudad" hidden>[ciudad pendiente]</span>
+                </span>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Formulario opcional. Para activarlo: crea un formulario en formspree.io y cambia
+             TU_ID_DE_FORMSPREE por tu identificador. Para quitarlo: borra este bloque. -->
+        <section aria-labelledby="titulo-formulario">
+          <h2 id="titulo-formulario">Escríbenos</h2>
+          <form id="formulario-contacto" action="https://formspree.io/f/TU_ID_DE_FORMSPREE" method="POST">
+            <div class="campo">
+              <label for="nombre">Nombre</label>
+              <input id="nombre" name="nombre" type="text" autocomplete="name" required>
+            </div>
+            <div class="campo">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" required>
+            </div>
+            <div class="campo">
+              <label for="mensaje">Mensaje</label>
+              <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+            </div>
+
+            <!-- Trampa para bots: una persona no ve este campo, así que nunca lo rellena -->
+            <div class="oculto-visual" aria-hidden="true">
+              <label for="gotcha">No rellenes este campo</label>
+              <input id="gotcha" type="text" name="_gotcha" tabindex="-1" autocomplete="off">
+            </div>
+
+            <button class="boton" type="submit">Enviar mensaje</button>
+            <p class="formulario__aviso" id="formulario-aviso" role="status" hidden>
+              El formulario todavía no está activado. De momento, escríbenos por Instagram.
+            </p>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie__interior">
+      <p class="pie__marca">Dark Paradox Studios</p>
+      <nav class="pie__redes" aria-label="Redes y contacto">
+        <a href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a data-contacto="email" hidden>Email</a>
+        <a data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>WhatsApp</a>
+      </nav>
+      <p data-ciudad hidden></p>
+      <p>© <span data-anio>2026</span> Dark Paradox Studios</p>
+    </div>
+  </footer>
+</body>
+</html>

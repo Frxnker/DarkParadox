@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cortos · Dark Paradox Studios</title>
+  <meta name="description" content="Todos los cortometrajes de terror de Dark Paradox Studios: pósters, sinopsis y tráileres.">
+  <meta name="theme-color" content="#0a0a0b">
+
+  <!-- Open Graph: la imagen TIENE que ser una URL completa. Cambia "usuario" por tu usuario de GitHub. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Dark Paradox Studios">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Cortos · Dark Paradox Studios">
+  <meta property="og:description" content="Todos los cortometrajes de terror de Dark Paradox Studios: pósters, sinopsis y tráileres.">
+  <meta property="og:image" content="https://usuario.github.io/darkparadox-web/img/og-image.jpg">
+
+  <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&amp;family=Source+Sans+3:wght@400;600&amp;family=Special+Elite&amp;display=swap">
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <script>document.documentElement.classList.add("js");</script>
+  <script src="./js/data.js" defer></script>
+  <script src="./js/main.js" defer></script>
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <header class="cabecera">
+    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio">
+      <img class="marca__icono" src="./img/logo.svg" alt="" width="30" height="30" loading="lazy">
+      <span class="marca__texto glitch" data-texto="Dark Paradox">Dark Paradox</span>
+    </a>
+
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+      <span class="menu-boton__barras" aria-hidden="true"></span>
+    </button>
+
+    <nav class="menu" id="menu-principal" aria-label="Principal">
+      <ul class="menu__lista">
+        <li><a href="./index.html">Inicio</a></li>
+        <li><a href="./cortos.html" aria-current="page">Cortos</a></li>
+        <li><a href="./proximamente.html">Próximamente</a></li>
+        <li><a href="./estudio.html">Estudio</a></li>
+        <li><a href="./contacto.html">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+    <div class="contenedor">
+      <div class="cabecera-pagina">
+        <h1>Cortos</h1>
+        <p class="pista-tactil">Toca un póster para ver sus datos. Tócalo otra vez para entrar.</p>
+      </div>
+
+      <!-- main.js genera aquí una tarjeta por cada corto de js/data.js -->
+      <ul class="rejilla-cortos" id="lista-cortos"></ul>
+      <noscript><p>Para ver el listado de cortos necesitas activar JavaScript.</p></noscript>
+    </div>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie__interior">
+      <p class="pie__marca">Dark Paradox Studios</p>
+      <nav class="pie__redes" aria-label="Redes y contacto">
+        <a href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a data-contacto="email" hidden>Email</a>
+        <a data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>WhatsApp</a>
+      </nav>
+      <p data-ciudad hidden></p>
+      <p>© <span data-anio>2026</span> Dark Paradox Studios</p>
+    </div>
+  </footer>
+</body>
+</html>

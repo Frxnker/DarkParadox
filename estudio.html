@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estudio · Dark Paradox Studios</title>
+  <meta name="description" content="Quiénes somos, por qué hacemos terror y qué equipo hay detrás de Dark Paradox Studios.">
+  <meta name="theme-color" content="#0a0a0b">
+
+  <!-- Open Graph: la imagen TIENE que ser una URL completa. Cambia "usuario" por tu usuario de GitHub. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Dark Paradox Studios">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Estudio · Dark Paradox Studios">
+  <meta property="og:description" content="Quiénes somos, por qué hacemos terror y qué equipo hay detrás de Dark Paradox Studios.">
+  <meta property="og:image" content="https://usuario.github.io/darkparadox-web/img/og-image.jpg">
+
+  <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&amp;family=Source+Sans+3:wght@400;600&amp;family=Special+Elite&amp;display=swap">
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <script>document.documentElement.classList.add("js");</script>
+  <script src="./js/data.js" defer></script>
+  <script src="./js/main.js" defer></script>
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <header class="cabecera">
+    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio">
+      <img class="marca__icono" src="./img/logo.svg" alt="" width="30" height="30" loading="lazy">
+      <span class="marca__texto glitch" data-texto="Dark Paradox">Dark Paradox</span>
+    </a>
+
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+      <span class="menu-boton__barras" aria-hidden="true"></span>
+    </button>
+
+    <nav class="menu" id="menu-principal" aria-label="Principal">
+      <ul class="menu__lista">
+        <li><a href="./index.html">Inicio</a></li>
+        <li><a href="./cortos.html">Cortos</a></li>
+        <li><a href="./proximamente.html">Próximamente</a></li>
+        <li><a href="./estudio.html" aria-current="page">Estudio</a></li>
+        <li><a href="./contacto.html">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+    <section class="contenedor manifiesto">
+      <div class="cabecera-pagina">
+        <h1>Estudio</h1>
+      </div>
+
+      <div class="texto-ancho">
+        <h2 class="aparece">Quiénes somos</h2>
+        <p class="aparece">
+          Dark Paradox Studios es una productora independiente de cortometrajes de terror.
+          Trabajamos con equipos pequeños, pocas luces y mucho tiempo mirando el mismo rincón,
+          hasta que parece que algo se mueve.
+        </p>
+
+        <h2 class="aparece manifiesto__subtitulo">Por qué hacemos terror</h2>
+        <p class="aparece">
+          Porque un corto no tiene tiempo de explicarlo todo, y lo que no se explica es
+          lo que te sigue hasta casa.
+        </p>
+        <blockquote class="manifiesto__cita aparece">
+          No nos interesan los sustos. Nos interesa la duda pequeña que llega después,
+          cuando apagas la luz del pasillo.
+        </blockquote>
+        <p class="aparece">
+          El miedo es de las pocas cosas que todavía compartimos a oscuras con desconocidos.
+          Por eso seguimos haciéndolo.
+        </p>
+      </div>
+    </section>
+
+    <section class="seccion contenedor">
+      <h2 class="aparece">Equipo</h2>
+      <!-- ⚠️ CONTENIDO DE EJEMPLO: pon los nombres, los roles y las fotos reales. La hoja de
+           estilos pasa las fotos a blanco y negro, así que pueden estar en color. -->
+      <p class="aparece"><span class="etiqueta-ejemplo">Contenido de ejemplo</span></p>
+
+      <ul class="equipo">
+        <li class="aparece">
+          <img class="equipo__foto" src="./img/equipo/persona-1.jpg" alt="Retrato en blanco y negro de Nombre Apellido" width="600" height="750" loading="lazy">
+          <h3 class="equipo__nombre">Nombre Apellido</h3>
+          <p class="equipo__rol">Dirección y guion</p>
+        </li>
+        <li class="aparece">
+          <img class="equipo__foto" src="./img/equipo/persona-2.jpg" alt="Retrato en blanco y negro de Nombre Apellido" width="600" height="750" loading="lazy">
+          <h3 class="equipo__nombre">Nombre Apellido</h3>
+          <p class="equipo__rol">Producción</p>
+        </li>
+        <li class="aparece">
+          <img class="equipo__foto" src="./img/equipo/persona-3.jpg" alt="Retrato en blanco y negro de Nombre Apellido" width="600" height="750" loading="lazy">
+          <h3 class="equipo__nombre">Nombre Apellido</h3>
+          <p class="equipo__rol">Dirección de fotografía</p>
+        </li>
+        <li class="aparece">
+          <img class="equipo__foto" src="./img/equipo/persona-4.jpg" alt="Retrato en blanco y negro de Nombre Apellido" width="600" height="750" loading="lazy">
+          <h3 class="equipo__nombre">Nombre Apellido</h3>
+          <p class="equipo__rol">Sonido y montaje</p>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie__interior">
+      <p class="pie__marca">Dark Paradox Studios</p>
+      <nav class="pie__redes" aria-label="Redes y contacto">
+        <a href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a data-contacto="email" hidden>Email</a>
+        <a data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>WhatsApp</a>
+      </nav>
+      <p data-ciudad hidden></p>
+      <p>© <span data-anio>2026</span> Dark Paradox Studios</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,1446 @@
+/* ==========================================================================
+   DARK PARADOX STUDIOS · HOJA DE ESTILOS
+
+   Mobile-first: los estilos base son para el móvil (375 px) y las media
+   queries del final de cada bloque añaden cambios para pantallas mayores.
+
+   ÍNDICE
+   1.  Variables
+   2.  Base
+   3.  Utilidades
+   4.  Efectos (grano, viñeteado, parpadeo, glitch, fundidos, apariciones)
+   5.  Cabecera y menú
+   6.  Botones y enlaces
+   7.  Pie
+   8.  Inicio
+   9.  Listado de cortos
+   10. Detalle de corto
+   11. Lightbox
+   12. Próximamente
+   13. Estudio
+   14. Contacto
+   15. Página 404 y mensajes temáticos
+   16. Movimiento reducido
+   ========================================================================== */
+
+
+/* 1. VARIABLES
+   -------------------------------------------------------------------------- */
+:root {
+  /* Colores */
+  --negro: #0a0a0b;
+  --negro-suave: #151517;
+  --linea: #2c2c2f;
+  --blanco-roto: #ece8e1;
+  --gris: #a8a29a;
+  /* El rojo solo tiene un contraste de 2:1 sobre el negro, así que nunca se usa
+     para texto sobre el fondo: solo como relleno, borde o decoración. */
+  --sangre: #8b0000;
+
+  /* Tipografías, con fuentes de respaldo por si Google Fonts no carga */
+  --fuente-titulos: "IM Fell English", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --fuente-texto: "Source Sans 3", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fuente-ficha: "Special Elite", "Courier New", Courier, monospace;
+
+  /* Medidas */
+  --margen: 1.25rem;
+  --ancho-max: 80rem;
+  --ancho-texto: 42rem;
+  --alto-cabecera: 4rem;
+  --tactil: 2.75rem; /* 44 px: tamaño mínimo cómodo para el dedo */
+
+  /* Movimiento */
+  --suave: 300ms ease;
+}
+
+
+/* 2. BASE
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* El atributo hidden debe ganar siempre, aunque el elemento tenga display: flex */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  background: var(--negro);
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+  /* Deja sitio a la cabecera fija al saltar a un ancla como #trailer */
+  scroll-padding-top: calc(var(--alto-cabecera) + 1rem);
+}
+
+html.sin-scroll {
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  background: var(--negro);
+  color: var(--blanco-roto);
+  font-family: var(--fuente-texto);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  /* Fundido desde negro al entrar en cada página */
+  animation: entrada-desde-negro 700ms ease-out backwards;
+  transition: opacity 280ms ease;
+}
+
+main {
+  flex: 1;
+  /* Evita que la cabecera fija tape el principio del contenido */
+  padding-top: var(--alto-cabecera);
+}
+
+main:focus {
+  outline: none;
+}
+
+/* En estas páginas la primera sección va a pantalla completa, bajo la cabecera */
+.pagina-hero main {
+  padding-top: 0;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 0.5em;
+  font-family: var(--fuente-titulos);
+  font-weight: 400; /* IM Fell solo tiene un peso: así no se fuerza una negrita falsa */
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 11vw, 4.75rem);
+}
+
+h2 {
+  font-size: clamp(1.875rem, 7vw, 2.75rem);
+}
+
+h3 {
+  font-size: 1.375rem;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+img,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+/* El foco de teclado es blanco porque el rojo no se vería sobre el negro */
+:focus-visible {
+  outline: 2px solid var(--blanco-roto);
+  outline-offset: 3px;
+}
+
+
+/* 3. UTILIDADES
+   -------------------------------------------------------------------------- */
+.contenedor {
+  width: min(100% - 2 * var(--margen), var(--ancho-max));
+  margin-inline: auto;
+}
+
+.seccion {
+  padding-block: clamp(3.5rem, 12vw, 7rem);
+}
+
+.seccion--corta {
+  padding-block: clamp(2.5rem, 8vw, 4.5rem);
+}
+
+.texto-ancho {
+  max-width: var(--ancho-texto);
+}
+
+.texto-secundario {
+  color: var(--gris);
+}
+
+/* Etiquetas tipo ficha de archivo: año, duración, antetítulos… */
+.ficha-texto {
+  margin: 0 0 0.75rem;
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+}
+
+/* Marca los contenidos de ejemplo. Desaparece al quitar "ejemplo: true" en data.js */
+.etiqueta-ejemplo {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--gris);
+  background: var(--negro);
+  color: var(--blanco-roto);
+  font-family: var(--fuente-ficha);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+}
+
+/* Oculto a la vista, pero accesible para los lectores de pantalla */
+.oculto-visual {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Enlace "Saltar al contenido": solo aparece al llegar con el tabulador */
+.saltar {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 200;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tactil);
+  padding-inline: 1rem;
+  background: var(--blanco-roto);
+  color: var(--negro);
+  transform: translateY(-200%);
+}
+
+.saltar:focus {
+  transform: none;
+}
+
+
+/* 4. EFECTOS
+   -------------------------------------------------------------------------- */
+
+/* Grano de película: ruido generado con un SVG incrustado, sin pedir ningún archivo.
+   Se mueve a saltos para imitar la proyección. pointer-events: none deja pulsar debajo. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 9000;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 -.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  opacity: 0.07;
+  pointer-events: none;
+  animation: grano 900ms steps(6) infinite;
+  will-change: transform;
+}
+
+/* Viñeteado: oscurece los bordes de la pantalla */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 8998;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  pointer-events: none;
+}
+
+/* Parpadeo ocasional: una capa negra casi invisible que main.js activa de vez en
+   cuando. Son dos bajadas muy leves en casi un segundo, por debajo del límite de
+   tres destellos por segundo que marcan las pautas de accesibilidad. */
+.parpadeo {
+  position: fixed;
+  inset: 0;
+  z-index: 8999;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.parpadeo.activo {
+  animation: parpadeo 900ms linear;
+}
+
+/* Glitch: dos copias del texto (una roja y una gris) que saltan un instante.
+   El texto se copia del atributo data-texto del HTML. */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-texto);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch::before {
+  color: var(--sangre);
+  animation: glitch-a 9s steps(1) infinite;
+}
+
+.glitch::after {
+  color: var(--gris);
+  animation: glitch-b 9s steps(1) infinite;
+}
+
+/* Fundido a negro al cambiar de página (main.js añade la clase) */
+body.saliendo {
+  opacity: 0;
+}
+
+/* Aparición al hacer scroll. Solo se oculta si hay JavaScript (clase .js en <html>);
+   así, sin JavaScript, todo el contenido sigue siendo visible. */
+.js .aparece {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition: opacity 900ms ease, transform 900ms ease;
+}
+
+.js .aparece.visible {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes entrada-desde-negro {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes grano {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3%, 2%); }
+  40%  { transform: translate(2%, -4%); }
+  60%  { transform: translate(-2%, 3%); }
+  80%  { transform: translate(4%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes parpadeo {
+  0%, 25%, 55%, 100% { opacity: 0; }
+  10% { opacity: 0.12; }
+  38% { opacity: 0.18; }
+}
+
+@keyframes glitch-a {
+  0%, 92%, 100% { opacity: 0; transform: none; clip-path: none; }
+  93%   { opacity: 0.95; transform: translate(-3px, 1px); clip-path: inset(12% 0 58% 0); }
+  94.5% { opacity: 0.95; transform: translate(3px, -1px); clip-path: inset(62% 0 10% 0); }
+  96%   { opacity: 0.95; transform: translate(-2px, 0); clip-path: inset(38% 0 40% 0); }
+  97%   { opacity: 0; }
+}
+
+@keyframes glitch-b {
+  0%, 92.5%, 100% { opacity: 0; transform: none; clip-path: none; }
+  93.5% { opacity: 0.6; transform: translate(3px, 0); clip-path: inset(55% 0 22% 0); }
+  95%   { opacity: 0.6; transform: translate(-2px, 1px); clip-path: inset(8% 0 72% 0); }
+  96%   { opacity: 0; }
+}
+
+
+/* 5. CABECERA Y MENÚ
+   -------------------------------------------------------------------------- */
+.cabecera {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--alto-cabecera);
+  padding-inline: var(--margen);
+  transition: background-color var(--suave);
+}
+
+/* Al bajar por la página, la cabecera gana un fondo para seguir siendo legible */
+.cabecera.con-fondo {
+  background: rgba(10, 10, 11, 0.94);
+}
+
+.marca {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: var(--tactil);
+  font-family: var(--fuente-titulos);
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+
+.marca__icono {
+  width: 1.875rem;
+  height: 1.875rem;
+}
+
+.marca__texto.glitch::before,
+.marca__texto.glitch::after {
+  animation-duration: 13s;
+}
+
+/* Botón hamburguesa: 48 × 48 px */
+.menu-boton {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-right: -0.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blanco-roto);
+  cursor: pointer;
+}
+
+/* Las tres barras: la central es el propio span; las otras, sus pseudoelementos */
+.menu-boton__barras,
+.menu-boton__barras::before,
+.menu-boton__barras::after {
+  display: block;
+  width: 1.5rem;
+  height: 2px;
+  background: currentColor;
+  transition: transform var(--suave), background-color var(--suave);
+}
+
+.menu-boton__barras {
+  position: relative;
+}
+
+.menu-boton__barras::before,
+.menu-boton__barras::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.menu-boton__barras::before {
+  transform: translateY(-7px);
+}
+
+.menu-boton__barras::after {
+  transform: translateY(7px);
+}
+
+/* Al abrir, las barras forman una X */
+.menu-boton[aria-expanded="true"] .menu-boton__barras {
+  background: transparent;
+}
+
+.menu-boton[aria-expanded="true"] .menu-boton__barras::before {
+  transform: rotate(45deg);
+}
+
+.menu-boton[aria-expanded="true"] .menu-boton__barras::after {
+  transform: rotate(-45deg);
+}
+
+/* Menú a pantalla completa en el móvil. visibility: hidden impide llegar a los
+   enlaces con el tabulador mientras está cerrado. */
+.menu {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: var(--alto-cabecera) var(--margen);
+  background: var(--negro);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--suave), visibility var(--suave);
+}
+
+.menu.abierto {
+  opacity: 1;
+  visibility: visible;
+}
+
+.menu__lista {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.menu__lista a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3.5rem;
+  font-family: var(--fuente-titulos);
+  font-size: 2.25rem;
+  text-decoration: none;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+/* Página actual y enlace señalado: subrayado rojo */
+.menu__lista a[aria-current="page"],
+.menu__lista a:hover {
+  text-decoration-line: underline;
+  text-decoration-color: var(--sangre);
+}
+
+/* Sin JavaScript el botón no funcionaría: se muestra el menú tal cual */
+html:not(.js) .cabecera {
+  position: static;
+  flex-wrap: wrap;
+  height: auto;
+  padding-block: 0.5rem;
+}
+
+html:not(.js) main {
+  padding-top: 0;
+}
+
+html:not(.js) .menu-boton {
+  display: none;
+}
+
+html:not(.js) .menu {
+  position: static;
+  padding: 0;
+  opacity: 1;
+  visibility: visible;
+}
+
+html:not(.js) .menu__lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.25rem;
+}
+
+html:not(.js) .menu__lista a {
+  font-family: var(--fuente-texto);
+  font-size: 1.0625rem;
+  min-height: var(--tactil);
+}
+
+/* Escritorio: menú en línea, sin hamburguesa */
+@media (min-width: 48rem) {
+  :root {
+    --margen: 2.5rem;
+  }
+
+  .menu-boton {
+    display: none;
+  }
+
+  .menu {
+    position: static;
+    padding: 0;
+    background: none;
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+  }
+
+  .menu__lista {
+    display: flex;
+    gap: 1.75rem;
+    width: auto;
+  }
+
+  .menu__lista a {
+    min-height: var(--tactil);
+    font-family: var(--fuente-texto);
+    font-size: 1rem;
+  }
+}
+
+
+/* 6. BOTONES Y ENLACES
+   -------------------------------------------------------------------------- */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding: 0.5rem 1.75rem;
+  border: 1px solid var(--sangre);
+  background: var(--sangre);
+  color: var(--blanco-roto);
+  font-family: var(--fuente-ficha);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--suave), border-color var(--suave), color var(--suave);
+}
+
+.boton--secundario {
+  border-color: var(--gris);
+  background: transparent;
+}
+
+@media (hover: hover) {
+  .boton:hover {
+    border-color: var(--blanco-roto);
+    background: var(--blanco-roto);
+    color: var(--negro);
+  }
+}
+
+/* Enlace suelto: altura táctil y subrayado claro */
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tactil);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color var(--suave);
+}
+
+.enlace:hover {
+  text-decoration-color: var(--sangre);
+  text-decoration-thickness: 2px;
+}
+
+
+/* 7. PIE
+   -------------------------------------------------------------------------- */
+.pie {
+  padding-block: 2.5rem;
+  border-top: 1px solid var(--linea);
+  color: var(--gris);
+  font-size: 0.9375rem;
+}
+
+.pie__interior {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.pie p {
+  margin: 0;
+}
+
+.pie__marca {
+  color: var(--blanco-roto);
+  font-family: var(--fuente-titulos);
+  font-size: 1.25rem;
+}
+
+.pie__redes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+}
+
+.pie__redes a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tactil);
+  color: var(--blanco-roto);
+  text-underline-offset: 0.25em;
+}
+
+.pie__redes a:hover {
+  text-decoration-color: var(--sangre);
+  text-decoration-thickness: 2px;
+}
+
+@media (min-width: 48rem) {
+  .pie__interior {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    column-gap: 2rem;
+  }
+
+  .pie__redes {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+
+/* 8. INICIO
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  isolation: isolate; /* Mantiene los z-index negativos dentro de esta sección */
+  display: flex;
+  align-items: flex-end;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--negro);
+  text-align: center;
+}
+
+.hero__video {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Degradado que asegura la legibilidad del texto sobre la imagen */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    var(--negro) 4%,
+    rgba(10, 10, 11, 0.8) 36%,
+    rgba(10, 10, 11, 0.1) 68%,
+    rgba(10, 10, 11, 0.5) 100%
+  );
+}
+
+.hero__contenido {
+  padding-bottom: clamp(3rem, 9vh, 5.5rem);
+}
+
+.hero__logo {
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 auto 1rem;
+}
+
+.hero__titulo {
+  margin-bottom: 0.75rem;
+  font-size: clamp(3rem, 15vw, 6.5rem);
+  line-height: 1;
+}
+
+.hero__estudio {
+  display: block;
+  margin-top: 0.6rem;
+  color: var(--blanco-roto);
+  font-family: var(--fuente-ficha);
+  font-size: 1rem;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em; /* Compensa el espaciado para que quede bien centrado */
+  text-transform: uppercase;
+}
+
+.hero__lema {
+  margin-bottom: 1.75rem;
+  font-size: 1.125rem;
+}
+
+/* Último corto destacado */
+.destacado {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.destacado__poster-enlace {
+  display: block;
+  max-width: 22rem;
+}
+
+.destacado__poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: var(--negro-suave);
+}
+
+.destacado__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+/* Franja que invita a ver Próximamente */
+.aviso-proximo {
+  border-top: 1px solid var(--linea);
+  text-align: center;
+}
+
+.aviso-proximo p {
+  margin-bottom: 1.25rem;
+  font-family: var(--fuente-titulos);
+  font-size: clamp(1.625rem, 6vw, 2.25rem);
+  font-style: italic;
+  line-height: 1.2;
+}
+
+@media (min-width: 48rem) {
+  .destacado {
+    grid-template-columns: minmax(0, 24rem) minmax(0, var(--ancho-texto));
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .destacado__poster-enlace {
+    max-width: none;
+  }
+}
+
+
+/* 9. LISTADO DE CORTOS
+   -------------------------------------------------------------------------- */
+.cabecera-pagina {
+  padding-block: clamp(2.5rem, 8vw, 4.5rem) 1.5rem;
+}
+
+.pista-tactil {
+  display: none;
+  margin-bottom: 0;
+  color: var(--gris);
+  font-size: 0.9375rem;
+}
+
+/* Solo en dispositivos táctiles, donde no existe el "pasar el ratón" */
+@media (hover: none) {
+  .pista-tactil {
+    display: block;
+  }
+}
+
+/* 1 columna en móvil, 2 en tablet, 3 y 4 en escritorio */
+.rejilla-cortos {
+  display: grid;
+  gap: 1.25rem;
+  padding-bottom: clamp(3.5rem, 12vw, 7rem);
+}
+
+@media (min-width: 37.5rem) {
+  .rejilla-cortos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .rejilla-cortos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 90rem) {
+  .rejilla-cortos {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.tarjeta__enlace {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--negro-suave);
+  text-decoration: none;
+}
+
+.tarjeta__poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  transition: transform 600ms ease;
+}
+
+/* Capa que oscurece el póster y contiene los datos. Con opacity (y no display: none)
+   el título sigue disponible para los lectores de pantalla. */
+.tarjeta__velo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.25rem;
+  background: rgba(10, 10, 11, 0.84);
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.tarjeta__titulo {
+  margin-bottom: 0.4rem;
+  font-size: 2rem;
+}
+
+.tarjeta__datos {
+  margin: 0 0 1rem;
+  color: var(--blanco-roto);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+}
+
+.tarjeta__accion {
+  align-self: flex-start;
+  padding-bottom: 0.15rem;
+  border-bottom: 2px solid var(--sangre);
+  font-size: 1rem;
+}
+
+/* El velo aparece con el ratón, con el foco del teclado o al tocar (.activa, en main.js) */
+.tarjeta__enlace:focus-visible .tarjeta__velo,
+.tarjeta.activa .tarjeta__velo {
+  opacity: 1;
+}
+
+/* Dentro de @media (hover: hover) para que el efecto no se quede "pegado" en el móvil */
+@media (hover: hover) {
+  .tarjeta__enlace:hover .tarjeta__velo {
+    opacity: 1;
+  }
+
+  .tarjeta__enlace:hover .tarjeta__poster {
+    transform: scale(1.03);
+  }
+}
+
+.tarjeta .etiqueta-ejemplo {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+}
+
+
+/* 10. DETALLE DE CORTO
+   -------------------------------------------------------------------------- */
+.corto {
+  padding-block: 1rem clamp(3.5rem, 12vw, 7rem);
+}
+
+.corto__volver {
+  margin-bottom: 1rem;
+  color: var(--gris);
+}
+
+.corto__portada {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.corto__poster {
+  width: 100%;
+  max-width: 22rem;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: var(--negro-suave);
+}
+
+.corto__sinopsis {
+  font-size: 1.125rem;
+}
+
+.corto__aviso-ejemplo {
+  margin-bottom: 1rem;
+}
+
+.corto__bloque {
+  padding-top: clamp(2.5rem, 8vw, 4.5rem);
+}
+
+/* Reproductor responsive 16:9 */
+.video-16-9 {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  background: var(--negro-suave);
+}
+
+.trailer-pendiente {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--linea);
+  background: var(--negro-suave);
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  text-align: center;
+}
+
+/* Ficha técnica */
+.ficha-tecnica {
+  margin: 0;
+  border-top: 1px solid var(--linea);
+}
+
+.ficha-tecnica__fila {
+  display: grid;
+  gap: 0.1rem;
+  padding-block: 0.875rem;
+  border-bottom: 1px solid var(--linea);
+}
+
+.ficha-tecnica dt {
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+}
+
+.ficha-tecnica dd {
+  margin: 0;
+}
+
+/* Galería de fotogramas: el primero, grande */
+.galeria {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.galeria__miniatura {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: var(--negro-suave);
+  cursor: zoom-in;
+}
+
+.galeria__miniatura img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  transition: opacity var(--suave);
+}
+
+.galeria li:first-child {
+  grid-column: 1 / -1;
+}
+
+@media (hover: hover) {
+  .galeria__miniatura:hover img {
+    opacity: 0.7;
+  }
+}
+
+.lista-festivales li {
+  padding-block: 0.875rem;
+  border-bottom: 1px solid var(--linea);
+}
+
+.lista-festivales li:first-child {
+  border-top: 1px solid var(--linea);
+}
+
+@media (min-width: 48rem) {
+  .corto__portada {
+    grid-template-columns: minmax(0, 24rem) minmax(0, var(--ancho-texto));
+    gap: 3.5rem;
+    align-items: start;
+  }
+
+  .corto__poster {
+    max-width: none;
+  }
+
+  .ficha-tecnica__fila {
+    grid-template-columns: 11rem 1fr;
+    gap: 1rem;
+  }
+
+  .galeria {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .galeria li:first-child {
+    grid-column: auto;
+  }
+}
+
+
+/* 11. LIGHTBOX
+   Usa <dialog>, que ya atrapa el foco del teclado y se cierra con Escape.
+   -------------------------------------------------------------------------- */
+.lightbox {
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--blanco-roto);
+}
+
+.lightbox[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.lightbox::backdrop {
+  background: rgba(5, 5, 6, 0.96);
+}
+
+.lightbox__barra {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem;
+}
+
+.lightbox__figura {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  margin: 0;
+  padding-inline: 0.5rem;
+  touch-action: pan-y pinch-zoom; /* El gesto horizontal lo gestiona main.js */
+}
+
+.lightbox__figura img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.lightbox__controles {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 0.75rem;
+}
+
+.lightbox__contador {
+  min-width: 4rem;
+  font-family: var(--fuente-ficha);
+  text-align: center;
+}
+
+.lightbox__boton {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 1px solid var(--linea);
+  background: var(--negro);
+  color: var(--blanco-roto);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color var(--suave);
+}
+
+@media (hover: hover) {
+  .lightbox__boton:hover {
+    border-color: var(--blanco-roto);
+  }
+}
+
+
+/* 12. PRÓXIMAMENTE
+   -------------------------------------------------------------------------- */
+.teaser {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-block: calc(var(--alto-cabecera) + 1rem) 2rem;
+  overflow: hidden;
+}
+
+.teaser__fondo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.teaser::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(10, 10, 11, 0.74);
+}
+
+.teaser__linea {
+  margin-bottom: 1.1em;
+  font-family: var(--fuente-titulos);
+  font-size: clamp(1.625rem, 7vw, 2.75rem);
+  line-height: 1.2;
+}
+
+/* Las líneas aparecen una a una, como si se enfocaran poco a poco */
+.js .teaser__linea {
+  opacity: 0;
+  filter: blur(6px);
+  transition: opacity 1600ms ease, filter 1600ms ease;
+}
+
+.js .teaser__linea.visible {
+  opacity: 1;
+  filter: none;
+}
+
+.teaser__titulo {
+  margin: 0.4em 0 0;
+  font-size: clamp(2.5rem, 11vw, 4.75rem);
+  line-height: 1.05;
+}
+
+.cuenta-atras {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  max-width: 30rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.cuenta-atras__celda {
+  padding: 0.875rem 0.25rem;
+  border: 1px solid var(--linea);
+  background: var(--negro-suave);
+  text-align: center;
+}
+
+.cuenta-atras__numero {
+  display: block;
+  font-family: var(--fuente-ficha);
+  font-size: clamp(1.5rem, 7vw, 2.25rem);
+  line-height: 1.2;
+}
+
+.cuenta-atras__unidad {
+  display: block;
+  color: var(--gris);
+  font-size: 0.8125rem;
+}
+
+
+/* 13. ESTUDIO
+   -------------------------------------------------------------------------- */
+.manifiesto p {
+  font-size: 1.125rem;
+}
+
+.manifiesto__subtitulo {
+  margin-top: 3rem;
+}
+
+.manifiesto__cita {
+  margin: 2rem 0;
+  padding-left: 1.25rem;
+  border-left: 3px solid var(--sangre);
+  font-family: var(--fuente-titulos);
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  font-style: italic;
+  line-height: 1.3;
+}
+
+.equipo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem 1rem;
+  margin-top: 1.75rem;
+}
+
+.equipo__foto {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  margin-bottom: 0.75rem;
+  object-fit: cover;
+  background: var(--negro-suave);
+  /* Blanco y negro también para las fotos reales, aunque estén en color */
+  filter: grayscale(1) contrast(1.05);
+}
+
+.equipo__nombre {
+  margin-bottom: 0.2rem;
+  font-size: 1.25rem;
+}
+
+.equipo__rol {
+  margin: 0;
+  color: var(--gris);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+@media (min-width: 48rem) {
+  .equipo {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+
+/* 14. CONTACTO
+   -------------------------------------------------------------------------- */
+.contacto {
+  display: grid;
+  gap: 3rem;
+  padding-bottom: clamp(3.5rem, 12vw, 7rem);
+}
+
+.canales {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.canal {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--linea);
+  background: var(--negro-suave);
+  text-decoration: none;
+  transition: border-color var(--suave);
+}
+
+a.canal:hover {
+  border-color: var(--blanco-roto);
+}
+
+.canal__icono {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.canal__tipo {
+  display: block;
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.875rem;
+}
+
+.canal__valor {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.canal--pendiente {
+  border-style: dashed;
+  color: var(--gris);
+}
+
+.canal--pendiente .canal__valor {
+  color: var(--gris);
+}
+
+/* Formulario */
+.campo {
+  margin-bottom: 1.25rem;
+}
+
+.campo label {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.campo input,
+.campo textarea {
+  display: block;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--gris);
+  border-radius: 0;
+  background: var(--negro-suave);
+  color: var(--blanco-roto);
+  font: inherit;
+  font-size: 1rem; /* Con menos de 16 px, iOS amplía la página al escribir */
+}
+
+.campo textarea {
+  min-height: 9rem;
+  resize: vertical;
+}
+
+.formulario__aviso {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--sangre);
+  background: var(--negro-suave);
+}
+
+@media (min-width: 48rem) {
+  .contacto {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 4rem;
+    align-items: start;
+  }
+}
+
+
+/* 15. PÁGINA 404 Y MENSAJES TEMÁTICOS
+   -------------------------------------------------------------------------- */
+.mensaje-tematico {
+  display: grid;
+  align-content: center;
+  min-height: 70vh;
+  padding-block: 3rem;
+}
+
+.mensaje-tematico__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+
+/* 16. MOVIMIENTO REDUCIDO
+   Para quien lo ha pedido en su sistema: sin grano animado, parpadeos, glitch
+   ni fundidos. Todo el contenido aparece directamente.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .js .aparece,
+  .js .teaser__linea {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .parpadeo {
+    display: none;
+  }
+
+  /* La copia del glitch quedaría superpuesta si no se oculta */
+  .glitch::before,
+  .glitch::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
