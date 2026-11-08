@@ -37,6 +37,10 @@
   /* El rojo solo tiene un contraste de 2:1 sobre el negro, así que nunca se usa
      para texto sobre el fondo: solo como relleno, borde o decoración. */
   --sangre: #8b0000;
+  /* Rojo más vivo, solo para letras sueltas de títulos de 24 px o más (la Z de
+     SentenZia): 3,4:1 sobre el negro, por encima del 3:1 que piden las pautas
+     de accesibilidad para el texto grande. */
+  --sangre-viva: #c8161d;
 
   /* Tipografías, con fuentes de respaldo por si Google Fonts no carga */
   --fuente-titulos: "IM Fell English", "Iowan Old Style", Georgia, "Times New Roman", serif;
@@ -197,16 +201,23 @@ a {
   letter-spacing: 0.04em;
 }
 
-/* Marca los contenidos de ejemplo. Desaparece al quitar "ejemplo: true" en data.js */
-.etiqueta-ejemplo {
+/* Letras resaltadas en rojo dentro de un título (PROXIMO.resaltar en data.js) */
+.resalte {
+  color: var(--sangre-viva);
+  text-shadow: 0 0 0.4em rgba(139, 0, 0, 0.6);
+}
+
+/* Marca la tarjeta del próximo corto al final del listado */
+.etiqueta-proxima {
   display: inline-block;
   padding: 0.2rem 0.6rem;
   border: 1px solid var(--gris);
-  background: var(--negro);
+  background: rgba(10, 10, 11, 0.85);
   color: var(--blanco-roto);
   font-family: var(--fuente-ficha);
   font-size: 0.8125rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* Marca el corto más reciente. Texto blanco roto sobre el rojo: contraste de 8:1 */
@@ -1060,18 +1071,60 @@ html:not(.js) .menu__lista a {
   margin-top: 1.5rem;
 }
 
-/* Franja que invita a ver Próximamente */
+/* Franja que invita a ver Próximamente (datos de PROXIMO, en data.js): la
+   miniatura del póster y el texto. En el móvil, una encima del otro; desde
+   tablet, lado a lado. */
 .aviso-proximo {
   border-top: 1px solid var(--linea);
   text-align: center;
 }
 
-.aviso-proximo p {
-  margin-bottom: 1.25rem;
+.aviso-proximo__interior {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Miniatura del póster: siempre entera, en su proporción 4:5 */
+.aviso-proximo__poster {
+  display: block;
+  width: min(14rem, 70%);
+}
+
+.aviso-proximo__poster img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+  background: #000;
+  box-shadow: 0 0 0 1px var(--linea);
+  transition: filter var(--suave);
+}
+
+@media (hover: hover) {
+  .aviso-proximo__poster:hover img {
+    filter: brightness(1.2);
+  }
+}
+
+.aviso-proximo__texto {
+  max-width: 34rem;
+}
+
+.aviso-proximo__titulo {
+  margin-bottom: 0.25em;
+  font-size: clamp(2.75rem, 13vw, 4.5rem);
+  line-height: 1;
+}
+
+.aviso-proximo__frase {
+  margin-bottom: 1.5rem;
+  color: var(--gris);
   font-family: var(--fuente-titulos);
-  font-size: clamp(1.625rem, 6vw, 2.25rem);
+  font-size: clamp(1.25rem, 5vw, 1.625rem);
   font-style: italic;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 @media (min-width: 48rem) {
@@ -1083,6 +1136,22 @@ html:not(.js) .menu__lista a {
 
   .destacado__poster-enlace {
     max-width: none;
+  }
+
+  .aviso-proximo__interior {
+    flex-direction: row;
+    justify-content: center;
+    gap: 3.5rem;
+  }
+
+  .aviso-proximo__poster {
+    flex: none;
+    width: 15rem;
+  }
+
+  /* Con miniatura, el texto se alinea a la izquierda, junto a ella */
+  .aviso-proximo__poster:not([hidden]) + .aviso-proximo__texto {
+    text-align: left;
   }
 }
 
@@ -1211,6 +1280,23 @@ html:not(.js) .menu__lista a {
   }
 }
 
+/* Con pocos cortos (menos de POCOS_CORTOS, en main.js), los pósters van
+   centrados y con un ancho máximo, en lugar de dejar huecos en la rejilla.
+   main.js añade estas dos clases. */
+.rejilla-cortos--pocos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.rejilla-cortos--pocos .tarjeta {
+  flex: 0 1 22rem;
+}
+
+.listado--pocos .cabecera-pagina {
+  text-align: center;
+}
+
 .tarjeta__enlace {
   position: relative;
   display: block;
@@ -1276,12 +1362,22 @@ html:not(.js) .menu__lista a {
   }
 }
 
-.tarjeta .etiqueta-ejemplo {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
+/* Tarjeta "Próximamente" (la última del listado): el póster 4:5 se ve entero
+   dentro del mismo hueco 2:3 que los demás, centrado sobre negro (sus bordes
+   ya son negros), y sin el zoom al pasar el ratón, para que el título del
+   póster no llegue nunca al borde */
+.tarjeta__poster--proxima {
+  object-fit: contain;
+  background: #000;
 }
 
+@media (hover: hover) {
+  .tarjeta__enlace:hover .tarjeta__poster--proxima {
+    transform: none;
+  }
+}
+
+.tarjeta .etiqueta-proxima,
 .tarjeta .etiqueta-nuevo {
   position: absolute;
   top: 0.75rem;
@@ -1317,8 +1413,12 @@ html:not(.js) .menu__lista a {
   font-size: 1.125rem;
 }
 
-.corto__aviso-ejemplo {
-  margin-bottom: 1rem;
+/* Nota "Inspirado en…" bajo la sinopsis */
+.corto__inspiracion {
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+  letter-spacing: 0.02em;
 }
 
 /* Botones para compartir el corto */
@@ -1418,29 +1518,14 @@ html:not(.js) .menu__lista a {
   padding-top: clamp(2.5rem, 8vw, 4.5rem);
 }
 
-/* Reproductor responsive 16:9 */
-.video-16-9,
-.trailer-pendiente {
-  max-width: 60rem;
-}
-
+/* Reproductor responsive 16:9: el corto completo (<video>) o el tráiler de
+   YouTube (iframe). Si el vídeo no es exactamente 16:9, quedan franjas negras. */
 .video-16-9 {
   width: 100%;
+  max-width: 60rem;
   aspect-ratio: 16 / 9;
   border: 0;
-  background: var(--negro-suave);
-}
-
-.trailer-pendiente {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border: 1px solid var(--linea);
-  background: var(--negro-suave);
-  color: var(--gris);
-  font-family: var(--fuente-ficha);
-  text-align: center;
+  background: #000;
 }
 
 /* Ficha técnica */
@@ -1617,60 +1702,232 @@ html:not(.js) .menu__lista a {
 
 
 /* 12. PRÓXIMAMENTE
+   El póster de PROXIMO (data.js) es la pieza principal. En el móvil va a todo
+   el ancho de la pantalla, con el texto debajo; en escritorio, póster y texto
+   van lado a lado, centrados en vertical. El póster se ve SIEMPRE entero
+   (aspect-ratio 4:5 y object-fit: contain): lleva el título escrito y no se
+   puede recortar.
+   Efectos, todos desactivados si el sistema pide reducir el movimiento:
+     - entra con un fundido desde negro cuando ha cargado (clase "cargado");
+     - un viñeteado que respira despacio sobre sus bordes;
+     - cada 6 segundos, un pequeño sacudón, como una puerta que aporrean;
+     - arañazos en las esquinas, lejos del título.
+   Sin póster (PROXIMO.imagen vacío) queda solo el texto, con el título grande.
    -------------------------------------------------------------------------- */
-.teaser {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  align-items: center;
-  min-height: 100vh;
-  min-height: 100svh;
-  padding-block: calc(var(--alto-cabecera) + 1rem) 2rem;
+.proximo {
+  display: grid;
+  gap: 1.75rem;
+  padding-bottom: clamp(2rem, 6vw, 3rem);
+  /* Los arañazos asoman un poco por fuera del póster. En el móvil, donde el
+     póster ocupa todo el ancho, se cortan en el borde de la pantalla en lugar
+     de crear scroll horizontal. clip, a diferencia de hidden, no convierte la
+     sección en una caja con scroll propio. */
   overflow: hidden;
 }
 
-.teaser__fondo {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+@supports (overflow: clip) {
+  .proximo {
+    overflow: visible;
+    overflow-x: clip;
+  }
 }
 
-.teaser::after {
+.proximo__poster {
+  position: relative;
+}
+
+/* Fundido desde negro: el póster espera invisible hasta que ha cargado */
+.js .proximo__poster {
+  opacity: 0;
+}
+
+.js .proximo__poster.cargado {
+  opacity: 1;
+  animation: desde-negro 2.4s ease-out;
+}
+
+/* El marco agrupa el póster, su viñeteado y los arañazos, que se sacuden juntos */
+.proximo__marco {
+  position: relative;
+  animation: golpe 6s linear 2s infinite;
+}
+
+.proximo__imagen {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+  background: #000;
+}
+
+/* Viñeteado que respira: solo oscurece los bordes; el título queda fuera */
+.proximo__marco::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
-  background: rgba(10, 10, 11, 0.74);
+  z-index: 1;
+  background: radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(0, 0, 0, 0.75) 100%);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: respira 7s ease-in-out infinite alternate;
 }
 
-.teaser__linea {
-  margin-bottom: 1.1em;
+/* Arañazos: el dibujo de garras (<symbol id="garras"> de proximamente.html)
+   repetido en las esquinas del póster. Las medidas van en % del póster. */
+.proximo__aranazos {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  color: var(--blanco-roto);
+  pointer-events: none;
+}
+
+.aranazo {
+  position: absolute;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  fill: currentColor;
+}
+
+/* Arriba a la izquierda, asomando por fuera */
+.aranazo--1 {
+  top: -4%;
+  left: -6%;
+  width: 22%;
+  opacity: 0.16;
+  rotate: -18deg;
+}
+
+/* Abajo a la derecha: la otra mano, en espejo */
+.aranazo--2 {
+  right: -5%;
+  bottom: -4%;
+  width: 26%;
+  opacity: 0.12;
+  rotate: 22deg;
+  scale: -1 1;
+}
+
+/* Rojo, arriba a la derecha, sobre el marco de la puerta */
+.aranazo--3 {
+  top: 3%;
+  right: 4%;
+  width: 13%;
+  color: var(--sangre);
+  opacity: 0.7;
+  rotate: 14deg;
+}
+
+/* Pequeño, casi entero por fuera a la izquierda */
+.aranazo--4 {
+  top: 58%;
+  left: -9%;
+  width: 12%;
+  opacity: 0.12;
+  rotate: -6deg;
+}
+
+.proximo__texto {
+  width: min(100% - 2 * var(--margen), var(--ancho-texto));
+  margin-inline: auto;
+}
+
+/* PRÓXIMAMENTE · EN DESARROLLO */
+.proximo__estado {
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.proximo__titulo {
+  margin-bottom: 1rem;
+  font-size: clamp(3rem, 14vw, 6rem);
+  line-height: 1;
+}
+
+/* Con póster, el título es discreto: el póster ya lo lleva escrito en grande */
+.proximo--con-poster .proximo__titulo {
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.75rem, 6vw, 2.25rem);
+}
+
+.proximo__sinopsis {
+  font-size: 1.125rem;
+}
+
+.proximo__frase {
+  margin: 1.75rem 0 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--sangre);
   font-family: var(--fuente-titulos);
-  font-size: clamp(1.625rem, 7vw, 2.75rem);
-  line-height: 1.2;
+  font-size: clamp(1.375rem, 5vw, 1.75rem);
+  font-style: italic;
+  line-height: 1.3;
 }
 
-/* Las líneas aparecen una a una, como si se enfocaran poco a poco */
-.js .teaser__linea {
-  opacity: 0;
-  filter: blur(6px);
-  transition: opacity 1600ms ease, filter 1600ms ease;
+/* El texto aparece un poco después que el póster */
+.js .proximo__texto.aparece {
+  transition-delay: 600ms;
 }
 
-.js .teaser__linea.visible {
-  opacity: 1;
-  filter: none;
+@media (min-width: 48rem) {
+  .proximo {
+    width: min(100% - 2 * var(--margen), var(--ancho-max));
+    margin-inline: auto;
+    padding-block: 2.5rem;
+    align-content: center;
+  }
+
+  .proximo--con-poster {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  /* El póster cabe entero en la pantalla, sin tener que bajar para verlo */
+  .proximo__poster {
+    justify-self: end;
+    width: 100%;
+    max-width: calc((100vh - var(--alto-cabecera) - 5rem) * 0.8);
+    max-width: calc((100svh - var(--alto-cabecera) - 5rem) * 0.8);
+  }
+
+  .proximo__texto {
+    width: auto;
+    max-width: var(--ancho-texto);
+    margin: 0;
+  }
 }
 
-.teaser__titulo {
-  margin: 0.4em 0 0;
-  font-size: clamp(2.5rem, 11vw, 4.75rem);
-  line-height: 1.05;
+/* Escritorio: el bloque ocupa la pantalla y queda centrado en vertical */
+@media (min-width: 64rem) {
+  .proximo {
+    min-height: calc(100vh - var(--alto-cabecera));
+    min-height: calc(100svh - var(--alto-cabecera));
+  }
 }
 
+@keyframes desde-negro {
+  0%   { opacity: 0; filter: brightness(0); }
+  40%  { opacity: 1; filter: brightness(0.25); }
+  100% { opacity: 1; filter: brightness(1); }
+}
+
+@keyframes respira {
+  from { opacity: 0.35; }
+  to   { opacity: 1; }
+}
+
+/* Dos golpes secos y seguidos al final de cada ciclo; el resto, quieto */
+@keyframes golpe {
+  0%, 82%, 84.5%, 88%, 90.5%, 100% { translate: 0 0; rotate: 0deg; }
+  83%   { translate: -2px 1px; rotate: -0.3deg; }
+  83.8% { translate: 1px -1px; rotate: 0.15deg; }
+  89%   { translate: 2px 1px; rotate: 0.25deg; }
+  89.8% { translate: -1px 0; rotate: -0.1deg; }
+}
+
+/* Cuenta atrás, bajo el póster (solo si PROXIMO.fecha tiene fecha) */
 .cuenta-atras {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1706,20 +1963,7 @@ html:not(.js) .menu__lista a {
   font-size: 1.125rem;
 }
 
-.manifiesto__subtitulo {
-  margin-top: 3rem;
-}
-
-.manifiesto__cita {
-  margin: 2rem 0;
-  padding-left: 1.25rem;
-  border-left: 3px solid var(--sangre);
-  font-family: var(--fuente-titulos);
-  font-size: clamp(1.5rem, 6vw, 2rem);
-  font-style: italic;
-  line-height: 1.3;
-}
-
+/* Equipo (EQUIPO, en data.js): retrato redondo, nombre y rol */
 .equipo {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1727,14 +1971,34 @@ html:not(.js) .menu__lista a {
   margin-top: 1.75rem;
 }
 
-.equipo__foto {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  margin-bottom: 0.75rem;
+.equipo__retrato {
+  display: grid;
+  place-items: center;
+  width: min(100%, 9rem);
+  aspect-ratio: 1;
+  margin-bottom: 0.9rem;
+  border-radius: 50%;
   object-fit: cover;
   background: var(--negro-suave);
   /* Blanco y negro también para las fotos reales, aunque estén en color */
   filter: grayscale(1) contrast(1.05);
+}
+
+/* Sin foto: las iniciales dentro de un círculo con un fino anillo rojo,
+   como un sello de lacre */
+.equipo__iniciales {
+  border: 1px solid var(--linea);
+  box-shadow:
+    inset 0 0 0 5px var(--negro-suave),
+    inset 0 0 0 6px var(--sangre),
+    inset 0 0 2.5rem rgba(0, 0, 0, 0.6);
+  color: var(--blanco-roto);
+  font-family: var(--fuente-titulos);
+  font-size: 2.75rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  filter: none;
+  user-select: none;
 }
 
 .equipo__nombre {
@@ -1760,8 +2024,7 @@ html:not(.js) .menu__lista a {
 /* 14. CONTACTO
    -------------------------------------------------------------------------- */
 .contacto {
-  display: grid;
-  gap: 3rem;
+  max-width: 32rem;
   padding-bottom: clamp(3.5rem, 12vw, 7rem);
 }
 
@@ -1804,60 +2067,6 @@ a.canal:hover {
   overflow-wrap: anywhere;
 }
 
-.canal--pendiente {
-  border-style: dashed;
-  color: var(--gris);
-}
-
-.canal--pendiente .canal__valor,
-.canal__valor[data-pendiente] {
-  color: var(--gris);
-}
-
-/* Formulario */
-.campo {
-  margin-bottom: 1.25rem;
-}
-
-.campo label {
-  display: block;
-  margin-bottom: 0.4rem;
-}
-
-.campo input,
-.campo textarea {
-  display: block;
-  width: 100%;
-  min-height: 3rem;
-  padding: 0.75rem 0.875rem;
-  border: 1px solid var(--gris);
-  border-radius: 0;
-  background: var(--negro-suave);
-  color: var(--blanco-roto);
-  font: inherit;
-  font-size: 1rem; /* Con menos de 16 px, iOS amplía la página al escribir */
-}
-
-.campo textarea {
-  min-height: 9rem;
-  resize: vertical;
-}
-
-.formulario__aviso {
-  margin: 1rem 0 0;
-  padding: 0.75rem 1rem;
-  border-left: 3px solid var(--sangre);
-  background: var(--negro-suave);
-}
-
-@media (min-width: 48rem) {
-  .contacto {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 4rem;
-    align-items: start;
-  }
-}
-
 
 /* 15. PÁGINA 404 Y MENSAJES TEMÁTICOS
    -------------------------------------------------------------------------- */
@@ -1882,10 +2091,6 @@ a.canal:hover {
   padding-bottom: clamp(3rem, 10vw, 5.5rem);
 }
 
-.prensa__ejemplo {
-  margin-bottom: 1.25rem;
-}
-
 /* Descripciones del estudio: cada una en español y en inglés, con su botón de copiar */
 .descripcion {
   margin-bottom: 1rem;
@@ -1905,11 +2110,15 @@ a.canal:hover {
 
 /* Datos clave: el número grande arriba y su nombre debajo. En el HTML va primero
    el nombre (dt) y después el dato (dd), que es como lo lee un lector de pantalla;
-   column-reverse solo cambia el orden visual. */
+   column-reverse solo cambia el orden visual. Solo se pintan los datos que
+   existen, así que la caja se ajusta a cuántos haya: de uno a cuatro por fila,
+   sin dejar celdas vacías. */
 .datos-clave {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1px; /* El fondo gris que asoma entre las celdas hace de línea */
+  width: fit-content;
+  max-width: 100%;
   margin: 0;
   border: 1px solid var(--linea);
   background: var(--linea);
@@ -1917,8 +2126,10 @@ a.canal:hover {
 
 .datos-clave__dato {
   display: flex;
+  flex: 1 1 10rem;
   flex-direction: column-reverse;
   justify-content: flex-end;
+  min-width: 10rem;
   padding: 1.25rem 1rem;
   background: var(--negro);
 }
@@ -1935,13 +2146,6 @@ a.canal:hover {
   font-size: clamp(2rem, 8vw, 2.75rem);
   line-height: 1.1;
   overflow-wrap: anywhere;
-}
-
-.datos-clave dd.datos-clave__pendiente {
-  color: var(--gris);
-  font-family: var(--fuente-ficha);
-  font-size: 1.125rem;
-  line-height: 1.6;
 }
 
 /* Logotipos: muestra sobre su fondo y botones de descarga */
@@ -2057,10 +2261,6 @@ a.canal:hover {
     gap: 2.5rem;
   }
 
-  .datos-clave {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
   .logos {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2073,7 +2273,8 @@ a.canal:hover {
 
 /* 17. MOVIMIENTO REDUCIDO
    Para quien lo ha pedido en su sistema: sin grano animado, parpadeos, glitch
-   ni fundidos. Todo el contenido aparece directamente.
+   ni fundidos. Todo el contenido aparece directamente. El póster de
+   Próximamente sale sin fundido, quieto y con el viñeteado fijo.
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -2083,8 +2284,7 @@ a.canal:hover {
     transition: none !important;
   }
 
-  .js .aparece,
-  .js .teaser__linea {
+  .js .aparece {
     opacity: 1;
     filter: none;
     transform: none;

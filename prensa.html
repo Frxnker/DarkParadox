@@ -92,7 +92,7 @@
       </section>
 
       <!-- Fundación (ESTUDIO), ciudad (CONTACTO) y número de cortos y festivales
-           (se cuentan solos a partir de SHORTS) -->
+           (se cuentan solos a partir de SHORTS). Solo aparecen los que tienen dato. -->
       <section class="prensa__bloque" aria-labelledby="prensa-datos-titulo">
         <h2 id="prensa-datos-titulo" data-i18n="prensa.datos">Datos clave</h2>
         <div id="prensa-datos"></div>
@@ -148,16 +148,23 @@
         </div>
       </section>
 
+      <!-- Próximo corto: su póster para descargar, sacado de PROXIMO (js/data.js).
+           Solo aparece si PROXIMO tiene título y póster. -->
+      <section class="prensa__bloque" aria-labelledby="prensa-proximo" data-proximo-si-hay="imagen" hidden>
+        <h2 id="prensa-proximo" data-i18n="menu.proximamente">Próximamente</h2>
+        <div id="prensa-proximo-galeria"></div>
+      </section>
+
       <!-- Contacto de prensa: usa emailPrensa de CONTACTO (js/data.js) o, si está
-           vacío, el email general -->
+           vacío, el email general. El email y el WhatsApp solo aparecen si están rellenos. -->
       <section class="prensa__bloque" aria-labelledby="prensa-contacto">
         <h2 id="prensa-contacto" data-i18n="prensa.contacto">Contacto de prensa</h2>
         <p class="texto-secundario" data-i18n="prensa.contactoTexto">
           Para entrevistas, acreditaciones o material en otra resolución.
         </p>
         <ul class="canales prensa__canales">
-          <li>
-            <a class="canal" data-contacto="prensa" hidden>
+          <li data-si-hay="prensa" hidden>
+            <a class="canal" data-contacto="prensa">
               <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                 <rect x="3" y="5" width="18" height="14"/>
                 <path d="m3 6 9 7 9-7"/>
@@ -167,20 +174,10 @@
                 <span class="canal__valor" data-valor-prensa></span>
               </span>
             </a>
-            <div class="canal canal--pendiente" data-pendiente="prensa" hidden>
-              <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                <rect x="3" y="5" width="18" height="14"/>
-                <path d="m3 6 9 7 9-7"/>
-              </svg>
-              <span>
-                <span class="canal__tipo">Email</span>
-                <span class="canal__valor" data-i18n="contacto.emailPendiente">[email pendiente]</span>
-              </span>
-            </div>
           </li>
 
-          <li>
-            <a class="canal" data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>
+          <li data-si-hay="whatsapp" hidden>
+            <a class="canal" data-contacto="whatsapp" target="_blank" rel="noopener noreferrer">
               <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                 <path d="M4 20.5 5.3 16A8.5 8.5 0 1 1 8.4 19z"/>
               </svg>

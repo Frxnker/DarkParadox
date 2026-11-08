@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title data-i18n="estudio.tituloPagina">Estudio · Dark Paradox Studios</title>
-  <meta name="description" data-i18n-content="estudio.descripcion" content="Quiénes somos, por qué hacemos terror y qué equipo hay detrás de Dark Paradox Studios.">
+  <meta name="description" data-i18n-content="estudio.descripcion" content="Quiénes somos y qué equipo hay detrás de Dark Paradox Studios, productora independiente de cortometrajes de terror.">
   <meta name="theme-color" content="#0a0a0b">
 
   <!-- Open Graph: la imagen TIENE que ser una URL completa: si cambias de usuario o de repositorio, actualízala. -->
@@ -12,7 +12,7 @@
   <meta property="og:site_name" content="Dark Paradox Studios">
   <meta property="og:locale" content="es_ES">
   <meta property="og:title" content="Estudio · Dark Paradox Studios">
-  <meta property="og:description" content="Quiénes somos, por qué hacemos terror y qué equipo hay detrás de Dark Paradox Studios.">
+  <meta property="og:description" content="Quiénes somos y qué equipo hay detrás de Dark Paradox Studios, productora independiente de cortometrajes de terror.">
   <meta property="og:image" content="https://frxnker.github.io/DarkParadox/img/og-image.jpg">
 
   <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
@@ -83,58 +83,20 @@
         <h2 class="aparece" data-i18n="estudio.quienes">Quiénes somos</h2>
         <p class="aparece" data-i18n="estudio.quienesTexto">
           Dark Paradox Studios es una productora independiente de cortometrajes de terror.
-          Trabajamos con equipos pequeños, pocas luces y mucho tiempo mirando el mismo rincón,
-          hasta que parece que algo se mueve.
         </p>
-
-        <h2 class="aparece manifiesto__subtitulo" data-i18n="estudio.porque">Por qué hacemos terror</h2>
-        <p class="aparece" data-i18n="estudio.porqueTexto">
-          Porque un corto no tiene tiempo de explicarlo todo, y lo que no se explica es
-          lo que te sigue hasta casa.
-        </p>
-        <blockquote class="manifiesto__cita aparece" data-i18n="estudio.cita">
-          No nos interesan los sustos. Nos interesa la duda pequeña que llega después,
-          cuando apagas la luz del pasillo.
-        </blockquote>
-        <p class="aparece" data-i18n="estudio.cierre">
-          El miedo es de las pocas cosas que todavía compartimos a oscuras con desconocidos.
-          Por eso seguimos haciéndolo.
+        <p class="aparece" data-i18n="estudio.cortosTexto">
+          Nuestro primer corto es «Maleficio». El segundo, «SentenZia», ya está en camino.
         </p>
       </div>
     </section>
 
+    <!-- Equipo: main.js crea una ficha por persona a partir de EQUIPO, en js/data.js.
+         Sin foto, cada persona aparece con sus iniciales en un círculo. Si EQUIPO está
+         vacío, esta sección no se muestra. -->
     <section class="seccion contenedor">
       <h2 class="aparece" data-i18n="estudio.equipo">Equipo</h2>
-      <!-- ⚠️ CONTENIDO DE EJEMPLO: pon los nombres, los roles y las fotos reales. La hoja de
-           estilos pasa las fotos a blanco y negro, así que pueden estar en color. -->
-      <p class="aparece"><span class="etiqueta-ejemplo" data-i18n="comun.contenidoEjemplo">Contenido de ejemplo</span></p>
-
-      <ul class="equipo">
-        <li class="aparece">
-          <img class="equipo__foto" src="./img/equipo/persona-1.jpg" alt="Retrato en blanco y negro de Nombre Apellido"
-               data-i18n-alt="estudio.retrato" data-nombre="Nombre Apellido" width="600" height="750" loading="lazy">
-          <h3 class="equipo__nombre">Nombre Apellido</h3>
-          <p class="equipo__rol" data-i18n="estudio.rolDireccion">Dirección y guion</p>
-        </li>
-        <li class="aparece">
-          <img class="equipo__foto" src="./img/equipo/persona-2.jpg" alt="Retrato en blanco y negro de Nombre Apellido"
-               data-i18n-alt="estudio.retrato" data-nombre="Nombre Apellido" width="600" height="750" loading="lazy">
-          <h3 class="equipo__nombre">Nombre Apellido</h3>
-          <p class="equipo__rol" data-i18n="estudio.rolProduccion">Producción</p>
-        </li>
-        <li class="aparece">
-          <img class="equipo__foto" src="./img/equipo/persona-3.jpg" alt="Retrato en blanco y negro de Nombre Apellido"
-               data-i18n-alt="estudio.retrato" data-nombre="Nombre Apellido" width="600" height="750" loading="lazy">
-          <h3 class="equipo__nombre">Nombre Apellido</h3>
-          <p class="equipo__rol" data-i18n="estudio.rolFotografia">Dirección de fotografía</p>
-        </li>
-        <li class="aparece">
-          <img class="equipo__foto" src="./img/equipo/persona-4.jpg" alt="Retrato en blanco y negro de Nombre Apellido"
-               data-i18n-alt="estudio.retrato" data-nombre="Nombre Apellido" width="600" height="750" loading="lazy">
-          <h3 class="equipo__nombre">Nombre Apellido</h3>
-          <p class="equipo__rol" data-i18n="estudio.rolSonido">Sonido y montaje</p>
-        </li>
-      </ul>
+      <ul class="equipo" id="equipo"></ul>
+      <noscript><p>Para ver el equipo necesitas activar JavaScript.</p></noscript>
     </section>
   </main>
 

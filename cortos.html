@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title data-i18n="cortos.tituloPagina">Cortos · Dark Paradox Studios</title>
-  <meta name="description" data-i18n-content="cortos.descripcion" content="Todos los cortometrajes de terror de Dark Paradox Studios: pósters, sinopsis y tráileres.">
+  <meta name="description" data-i18n-content="cortos.descripcion" content="Los cortometrajes de terror de Dark Paradox Studios, con su sinopsis, ficha técnica y fotogramas.">
   <meta name="theme-color" content="#0a0a0b">
 
   <!-- Open Graph: la imagen TIENE que ser una URL completa: si cambias de usuario o de repositorio, actualízala. -->
@@ -12,7 +12,7 @@
   <meta property="og:site_name" content="Dark Paradox Studios">
   <meta property="og:locale" content="es_ES">
   <meta property="og:title" content="Cortos · Dark Paradox Studios">
-  <meta property="og:description" content="Todos los cortometrajes de terror de Dark Paradox Studios: pósters, sinopsis y tráileres.">
+  <meta property="og:description" content="Los cortometrajes de terror de Dark Paradox Studios, con su sinopsis, ficha técnica y fotogramas.">
   <meta property="og:image" content="https://frxnker.github.io/DarkParadox/img/og-image.jpg">
 
   <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
@@ -74,15 +74,17 @@
   </header>
 
   <main id="contenido" tabindex="-1">
-    <div class="contenedor">
+    <!-- Con menos de 4 cortos, main.js añade la clase listado--pocos y los pósters se centran -->
+    <div class="contenedor listado">
       <div class="cabecera-pagina">
         <h1 data-i18n="cortos.titulo">Cortos</h1>
         <p class="pista-tactil" data-i18n="cortos.pistaTactil">Toca un póster para ver sus datos. Tócalo otra vez para entrar.</p>
       </div>
 
       <!-- Buscador y filtros. Sin JavaScript no funcionarían, así que llevan hidden y
-           main.js los muestra. Filtran al momento y guardan su estado en la URL
-           (?q=&anio=&duracion=&orden=), para poder compartir una búsqueda. -->
+           main.js los muestra, pero solo a partir de 4 cortos (POCOS_CORTOS en main.js).
+           Filtran al momento y guardan su estado en la URL (?q=&anio=&duracion=&orden=),
+           para poder compartir una búsqueda. -->
       <form class="filtros" id="filtros" role="search" aria-label="Buscar y filtrar cortos" data-i18n-aria-label="filtros.nombre" hidden>
         <div class="filtros__campo filtros__campo--buscar">
           <label for="filtro-texto" data-i18n="filtros.buscar">Buscar</label>

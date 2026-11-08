@@ -4,16 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title data-i18n="proximamente.tituloPagina">Próximamente · Dark Paradox Studios</title>
-  <meta name="description" data-i18n-content="proximamente.descripcion" content="El próximo cortometraje de terror de Dark Paradox Studios, ahora en desarrollo.">
+  <meta name="description" data-i18n-content="proximamente.descripcion" content="El próximo cortometraje de terror de Dark Paradox Studios.">
   <meta name="theme-color" content="#0a0a0b">
 
-  <!-- Open Graph: la imagen TIENE que ser una URL completa: si cambias de usuario o de repositorio, actualízala. -->
+  <!-- Open Graph: la imagen TIENE que ser una URL completa: si cambias de usuario o de repositorio, actualízala.
+       Aquí es el póster del próximo corto (PROXIMO.imagen en js/data.js): las redes no ejecutan
+       JavaScript, así que si cambia el próximo corto hay que cambiar a mano el título y la imagen. -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Dark Paradox Studios">
   <meta property="og:locale" content="es_ES">
-  <meta property="og:title" content="Próximamente · Dark Paradox Studios">
-  <meta property="og:description" content="El próximo cortometraje de terror de Dark Paradox Studios, ahora en desarrollo.">
-  <meta property="og:image" content="https://frxnker.github.io/DarkParadox/img/og-image.jpg">
+  <meta property="og:title" content="SentenZia · Próximamente · Dark Paradox Studios">
+  <meta property="og:description" content="El próximo cortometraje de terror de Dark Paradox Studios.">
+  <meta property="og:image" content="https://frxnker.github.io/DarkParadox/img/sentenzia/poster.jpg">
+  <meta property="og:image:width" content="1122">
+  <meta property="og:image:height" content="1402">
+  <meta property="og:image:alt" content="Póster de SentenZia: un brazo vendado y ensangrentado se apoya en el suelo junto al título en rojo">
 
   <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="./img/favicon-32.png" sizes="32x32" type="image/png">
@@ -29,7 +34,7 @@
   <script src="./js/i18n.js" defer></script>
   <script src="./js/main.js" defer></script>
 </head>
-<body class="pagina-hero">
+<body>
   <a class="saltar" href="#contenido" data-i18n="comun.saltar">Saltar al contenido</a>
 
   <header class="cabecera">
@@ -74,52 +79,87 @@
   </header>
 
   <main id="contenido" tabindex="-1">
-    <!-- ⚠️ CONTENIDO DE EJEMPLO: sustituye el texto, la imagen y la fecha por los del corto real -->
-    <section class="teaser">
-      <img class="teaser__fondo" src="./img/proximamente/teaser.jpg" width="1400" height="1400" loading="lazy"
-           alt="Una vieja fotografía familiar en la que, al fondo, se distingue una figura alta e inmóvil."
-           data-i18n-alt="proximamente.imagen">
+    <!-- Todo lo marcado con data-proximo sale de PROXIMO, en js/data.js: no hay que
+         tocar este archivo para cambiar el próximo corto. main.js rellena cada dato y
+         deja oculto (hidden) lo que esté vacío. Sin título no se muestra este bloque. -->
 
-      <div class="contenedor">
-        <p class="ficha-texto"><span data-i18n="proximamente.enDesarrollo">En desarrollo</span> · <span class="etiqueta-ejemplo" data-i18n="comun.ejemplo">Ejemplo</span></p>
-        <!-- main.js muestra estas líneas una a una -->
-        <p class="teaser__linea" data-i18n="proximamente.linea1">Está en todas las fotos de la familia.</p>
-        <p class="teaser__linea" data-i18n="proximamente.linea2">Nadie recuerda quién es.</p>
-        <p class="teaser__linea" data-i18n="proximamente.linea3">En la de 1987 apenas se le distingue.</p>
-        <p class="teaser__linea" data-i18n="proximamente.linea4">En la de este verano está justo detrás de ti.</p>
-        <h1 class="teaser__linea teaser__titulo" data-i18n="proximamente.tituloCorto">El hombre del fondo</h1>
+    <!-- Dibujo de unas garras que se reutiliza en los arañazos del póster -->
+    <svg class="oculto-visual" aria-hidden="true" focusable="false">
+      <symbol id="garras" viewBox="0 0 200 300">
+        <path d="M28 40Q36 150 70 250 44 148 37 38Z"/>
+        <path d="M66 22Q74 150 112 270 84 148 76 20Z"/>
+        <path d="M106 18Q114 150 150 272 124 148 116 16Z"/>
+        <path d="M146 36Q152 140 182 238 161 138 155 34Z"/>
+        <path d="M41 70Q47 130 61 182 50 128 45 69Z" opacity=".55"/>
+        <path d="M120 60Q127 140 141 214 131 138 124 59Z" opacity=".55"/>
+      </symbol>
+    </svg>
+
+    <!-- El póster es la pieza principal: en el móvil, a todo el ancho y el texto debajo;
+         en escritorio, el póster a un lado y el texto al otro. Se muestra siempre entero
+         (proporción 4:5), entra con un fundido desde negro y, cada pocos segundos, da un
+         pequeño sacudón, como una puerta que aporrean, bajo un viñeteado que respira.
+         Sin movimiento si el sistema pide reducirlo. Estilos: css/styles.css, sección
+         "Próximamente". Si PROXIMO no tiene póster, queda solo el texto con el título en grande. -->
+    <section class="proximo" data-proximo-si-hay="titulo" hidden>
+      <div class="proximo__poster" data-proximo-si-hay="imagen" hidden>
+        <div class="proximo__marco">
+          <!-- data-proximo-alt: el texto alternativo sale de PROXIMO.imagenAlt -->
+          <img class="proximo__imagen" data-proximo="imagen" data-proximo-alt alt="" width="1122" height="1402" hidden>
+          <div class="proximo__aranazos" aria-hidden="true">
+            <svg class="aranazo aranazo--1" viewBox="0 0 200 300" focusable="false"><use href="#garras"/></svg>
+            <svg class="aranazo aranazo--2" viewBox="0 0 200 300" focusable="false"><use href="#garras"/></svg>
+            <svg class="aranazo aranazo--3" viewBox="0 0 200 300" focusable="false"><use href="#garras"/></svg>
+            <svg class="aranazo aranazo--4" viewBox="0 0 200 300" focusable="false"><use href="#garras"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="proximo__texto aparece">
+        <p class="ficha-texto proximo__estado">
+          <span data-i18n="menu.proximamente">Próximamente</span><span data-proximo-si-hay="estado" hidden> · <span data-proximo="estado" hidden></span></span>
+        </p>
+        <!-- El póster ya lleva el título, así que el h1 es discreto: está por accesibilidad y buscadores -->
+        <h1 class="proximo__titulo" data-proximo="titulo" hidden></h1>
+        <p class="proximo__sinopsis" data-proximo="sinopsis" hidden></p>
+        <p class="proximo__frase" data-proximo="frase" hidden></p>
       </div>
     </section>
 
+    <noscript>
+      <div class="contenedor cabecera-pagina">
+        <p>Para ver el próximo corto necesitas activar JavaScript.</p>
+      </div>
+    </noscript>
+
     <section class="seccion seccion--corta">
       <div class="contenedor">
-        <h2 class="aparece" data-i18n="proximamente.faltan">Faltan</h2>
-
-        <!-- Cuenta atrás opcional. Cambia la fecha en data-fecha (año-mes-díaThora:minutos:segundos)
-             o borra este bloque entero si todavía no hay fecha. -->
-        <div class="cuenta-atras aparece" id="cuenta-atras" data-fecha="2027-10-31T21:00:00"
-             role="timer" aria-label="Tiempo que falta para el estreno" data-i18n-aria-label="proximamente.tiempo">
-          <div class="cuenta-atras__celda">
-            <span class="cuenta-atras__numero" data-unidad="dias">--</span>
-            <span class="cuenta-atras__unidad" data-i18n="proximamente.dias">días</span>
-          </div>
-          <div class="cuenta-atras__celda">
-            <span class="cuenta-atras__numero" data-unidad="horas">--</span>
-            <span class="cuenta-atras__unidad" data-i18n="proximamente.horas">horas</span>
-          </div>
-          <div class="cuenta-atras__celda">
-            <span class="cuenta-atras__numero" data-unidad="minutos">--</span>
-            <span class="cuenta-atras__unidad" data-i18n="proximamente.minutos">min</span>
-          </div>
-          <div class="cuenta-atras__celda">
-            <span class="cuenta-atras__numero" data-unidad="segundos">--</span>
-            <span class="cuenta-atras__unidad" data-i18n="proximamente.segundos">seg</span>
+        <!-- Cuenta atrás: solo aparece si PROXIMO.fecha tiene una fecha válida -->
+        <div class="proximo__cuenta" data-proximo-si-hay="fecha" hidden>
+          <h2 class="aparece" data-i18n="proximamente.faltan">Faltan</h2>
+          <div class="cuenta-atras aparece" id="cuenta-atras"
+               role="timer" aria-label="Tiempo que falta para el estreno" data-i18n-aria-label="proximamente.tiempo">
+            <div class="cuenta-atras__celda">
+              <span class="cuenta-atras__numero" data-unidad="dias">--</span>
+              <span class="cuenta-atras__unidad" data-i18n="proximamente.dias">días</span>
+            </div>
+            <div class="cuenta-atras__celda">
+              <span class="cuenta-atras__numero" data-unidad="horas">--</span>
+              <span class="cuenta-atras__unidad" data-i18n="proximamente.horas">horas</span>
+            </div>
+            <div class="cuenta-atras__celda">
+              <span class="cuenta-atras__numero" data-unidad="minutos">--</span>
+              <span class="cuenta-atras__unidad" data-i18n="proximamente.minutos">min</span>
+            </div>
+            <div class="cuenta-atras__celda">
+              <span class="cuenta-atras__numero" data-unidad="segundos">--</span>
+              <span class="cuenta-atras__unidad" data-i18n="proximamente.segundos">seg</span>
+            </div>
           </div>
         </div>
 
         <p class="texto-ancho texto-secundario aparece" data-i18n="proximamente.texto">
-          Contaremos más cuando estemos seguros de que podemos contarlo.
-          Mientras tanto, el rodaje se sigue desde Instagram.
+          Contaremos más muy pronto. Mientras tanto, síguenos en Instagram.
         </p>
         <a class="boton aparece" href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer" data-i18n="proximamente.instagram">Seguir en Instagram</a>
       </div>

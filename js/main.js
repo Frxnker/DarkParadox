@@ -17,12 +17,13 @@
    6.  Datos de contacto
    7.  Inicio (vídeo, linterna y último corto)
    8.  Listado de cortos y filtros
-   9.  Detalle de corto (navegación y compartir)
+   9.  Detalle de corto (vídeo, ficha, navegación y compartir)
    10. Lightbox
    11. Prensa
-   12. Próximamente
-   13. Efectos
-   14. Puesta en marcha
+   12. Próximamente (póster, aviso del inicio y cuenta atrás)
+   13. Equipo
+   14. Efectos
+   15. Puesta en marcha
    ========================================================================== */
 "use strict";
 
@@ -34,11 +35,26 @@
 // ¿Ha pedido la persona menos animaciones en su sistema?
 const MOVIMIENTO_REDUCIDO = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// Si data.js tiene un error (por ejemplo, una coma olvidada), SHORTS no existirá.
+// Si data.js tiene un error (como una coma olvidada), SHORTS no existirá.
 // Con estas comprobaciones, el menú y el resto de la web siguen funcionando.
 const LISTA_CORTOS = typeof SHORTS !== "undefined" ? SHORTS : [];
 const DATOS_CONTACTO = typeof CONTACTO !== "undefined" ? CONTACTO : {};
 const DATOS_ESTUDIO = typeof ESTUDIO !== "undefined" ? ESTUDIO : {};
+const DATOS_PROXIMO = typeof PROXIMO !== "undefined" ? PROXIMO : {};
+const LISTA_EQUIPO = typeof EQUIPO !== "undefined" ? EQUIPO : [];
+
+// Con menos cortos que este número, el listado no muestra el buscador ni los
+// filtros (no hacen falta) y centra los pósters en lugar de dejar la rejilla
+// a medio llenar. Ambas cosas vuelven solas al llegar a este número.
+const POCOS_CORTOS = 4;
+
+// ¿Hay algo que mostrar? Un texto vacío, una lista vacía o un { es: "", en: "" }
+// cuentan como "no hay dato", y entonces su bloque no se muestra.
+function hayDato(valor) {
+  if (Array.isArray(valor)) return valor.some(hayDato);
+  if (valor && typeof valor === "object") return Object.values(valor).some(hayDato);
+  return valor !== undefined && valor !== null && String(valor).trim() !== "";
+}
 
 // Evita que un carácter como < o " de los datos rompa el HTML que generamos
 function escaparHTML(texto) {
@@ -66,21 +82,19 @@ function idDeYoutube(url) {
   return coincidencia ? coincidencia[1] : null;
 }
 
-// El reparto puede venir como lista o como texto suelto: aceptamos los dos
+// El reparto puede venir como lista o como texto suelto: aceptamos los dos.
+// Los nombres vacíos se saltan.
 function textoReparto(reparto) {
-  return [].concat(reparto).join(", ");
+  return [].concat(reparto ?? []).map(enIdioma).filter(hayDato).join(", ");
 }
 
-// Etiquetas visibles para los cortos marcados con "ejemplo: true" en data.js.
-// La corta va sobre el póster; la larga, junto al título.
-function etiquetaEjemplo(corto) {
-  return corto.ejemplo ? `<span class="etiqueta-ejemplo">${t("comun.ejemplo")}</span>` : "";
-}
-
-function avisoEjemplo(corto) {
-  return corto.ejemplo
-    ? `<p class="corto__aviso-ejemplo"><span class="etiqueta-ejemplo">${t("comun.contenidoEjemplo")}</span></p>`
-    : "";
+// Qué se puede ver de un corto en su ficha: el corto completo (video), el
+// tráiler de YouTube (trailerUrl) o nada. Si tiene los dos, manda el vídeo.
+// Cada caso tiene su ancla en la ficha: #ver o #trailer.
+function queSePuedeVer(corto) {
+  if (hayDato(corto.video)) return "ver";
+  if (idDeYoutube(corto.trailerUrl)) return "trailer";
+  return "";
 }
 
 // Etiqueta "Nuevo" para el corto más reciente (en el listado y en el inicio)
@@ -89,7 +103,7 @@ function etiquetaNuevo(corto) {
 }
 
 // Pasa un texto a minúsculas y le quita las tildes, para que al buscar
-// "dejame" se encuentre "Déjame"
+// "camara" se encuentre "Cámara"
 function normalizar(texto) {
   return String(texto)
     .toLowerCase()
@@ -232,7 +246,7 @@ function elegirIdiomaInicial() {
 
 // Devuelve un texto fijo en el idioma actual (o en español si falta). Las
 // palabras entre llaves se sustituyen por los datos que se pasen:
-// t("corto.trailerDe", { titulo: "Repique" }) → "Tráiler de «Repique»"
+// t("corto.trailerDe", { titulo: "Maleficio" }) → "Tráiler de «Maleficio»"
 function t(clave, datos = {}) {
   const texto = DICCIONARIOS[idioma]?.[clave] ?? DICCIONARIOS.es?.[clave] ?? clave;
   return texto.replace(/\{(\w+)\}/g, (marca, nombre) => datos[nombre] ?? marca);
@@ -419,7 +433,7 @@ function iniciarMenu() {
     }
   });
 
-  // …y si la pantalla crece hasta el diseño de escritorio (por ejemplo, al girar
+  // …y si la pantalla crece hasta el diseño de escritorio (como al girar
   // la tablet). Esta medida tiene que coincidir con la del CSS (sección 5).
   window.matchMedia("(min-width: 64rem)").addEventListener("change", (evento) => {
     if (evento.matches) cambiarMenu(false);
@@ -449,6 +463,9 @@ function iniciarFondoCabecera() {
    La elección se guarda en localStorage. Si se dejó encendido, en la página
    siguiente vuelve a sonar con el primer clic, toque o tecla: los navegadores
    no permiten que una página suene sin que la persona haga algo antes.
+
+   Mientras se reproduce un vídeo de la web (el corto completo), el ambiente
+   se calla, y vuelve solo cuando el vídeo se pausa o termina.
    -------------------------------------------------------------------------- */
 
 const CLAVE_SONIDO = "dp-sonido";
@@ -477,32 +494,72 @@ function leerPreferenciaSonido() {
   }
 }
 
+// El botón del altavoz sale pulsado mientras el ambiente suena
+function pintarBotonSonido() {
+  document.querySelectorAll(".sonido-boton").forEach((boton) => {
+    boton.setAttribute("aria-pressed", String(sonidoEncendido));
+  });
+}
+
+// Reproductores con sonido de la web: los <video> con controles (el corto
+// completo). El vídeo del inicio no cuenta: no tiene controles ni sonido.
+function esReproductor(elemento) {
+  return elemento instanceof HTMLVideoElement && elemento.controls;
+}
+
+function hayVideoSonando() {
+  return [...document.querySelectorAll("video[controls]")].some(
+    (video) => !video.paused && !video.ended
+  );
+}
+
 function iniciarSonido() {
   const boton = document.querySelector(".sonido-boton");
   if (!boton || !window.AudioContext) return;
 
   boton.hidden = false;
 
-  function pintarBoton() {
-    boton.setAttribute("aria-pressed", String(sonidoEncendido));
-  }
+  // true mientras el ambiente está callado porque suena un vídeo
+  let pausadoPorVideo = false;
 
   boton.addEventListener("click", () => {
+    // Un clic en el botón manda sobre la pausa automática del vídeo
+    pausadoPorVideo = false;
     if (sonidoEncendido) {
       apagarSonido();
     } else {
       encenderSonido();
     }
     guardarPreferenciaSonido();
-    pintarBoton();
+    pintarBotonSonido();
   });
+
+  // Al darle al play a un vídeo, el ambiente se funde a silencio (sin cambiar
+  // lo guardado). Los eventos de vídeo no "suben" por la página, así que se
+  // escuchan en la fase de captura: el true del final.
+  document.addEventListener("play", (evento) => {
+    if (!esReproductor(evento.target) || !sonidoEncendido) return;
+    pausadoPorVideo = true;
+    apagarSonido();
+    pintarBotonSonido();
+  }, true);
+
+  // Cuando el vídeo se pausa o termina (y no queda otro sonando), vuelve
+  const alPararVideo = (evento) => {
+    if (!esReproductor(evento.target) || !pausadoPorVideo || hayVideoSonando()) return;
+    pausadoPorVideo = false;
+    encenderSonido();
+    pintarBotonSonido();
+  };
+  document.addEventListener("pause", alPararVideo, true);
+  document.addEventListener("ended", alPararVideo, true);
 
   // Si se dejó encendido en otra página, el botón ya sale pulsado y el sonido
   // arranca con la primera interacción. Se sigue escuchando hasta que el
   // navegador deja sonar de verdad (estado "running").
   if (leerPreferenciaSonido()) {
     sonidoEncendido = true;
-    pintarBoton();
+    pintarBotonSonido();
 
     const eventos = ["click", "keydown", "touchend"];
     const alInteractuar = (evento) => {
@@ -531,7 +588,7 @@ function iniciarSonido() {
     setTimeout(() => {
       if (sonidoEncendido && document.activeElement?.tagName === "IFRAME") {
         apagarSonido();
-        pintarBoton();
+        pintarBotonSonido();
       }
     }, 0);
   });
@@ -726,6 +783,7 @@ function programarCrujido() {
 /* --------------------------------------------------------------------------
    6. DATOS DE CONTACTO
    Rellena los enlaces de todas las páginas a partir de CONTACTO (data.js).
+   Lo que no tiene dato no se muestra.
    -------------------------------------------------------------------------- */
 
 function iniciarContacto() {
@@ -746,6 +804,13 @@ function iniciarContacto() {
     enlace.hidden = false;
   });
 
+  // Bloques enteros que solo se muestran si existe su dato: data-si-hay="email",
+  // "prensa", "whatsapp" o "ciudad". Vienen con hidden en el HTML.
+  const datos = { email, prensa: correoPrensa, whatsapp, ciudad };
+  document.querySelectorAll("[data-si-hay]").forEach((bloque) => {
+    bloque.hidden = !hayDato(datos[bloque.dataset.siHay]);
+  });
+
   // En contacto.html y prensa.html el email también se muestra escrito
   document.querySelectorAll("[data-valor-email]").forEach((elemento) => {
     if (email) elemento.textContent = email;
@@ -761,28 +826,9 @@ function iniciarContacto() {
     elemento.hidden = false;
   });
 
-  // Avisos de "pendiente": solo se ven si falta el dato
-  const datos = { email, prensa: correoPrensa, whatsapp, ciudad };
-  document.querySelectorAll("[data-pendiente]").forEach((aviso) => {
-    aviso.hidden = Boolean(datos[aviso.dataset.pendiente]);
-  });
-
   // Año actual en el pie
   document.querySelectorAll("[data-anio]").forEach((elemento) => {
     elemento.textContent = new Date().getFullYear();
-  });
-}
-
-// Mientras el action del formulario tenga el texto de muestra, Formspree no puede
-// recibir nada: avisamos en lugar de mandar a la persona a una página de error.
-function iniciarFormulario() {
-  const formulario = document.getElementById("formulario-contacto");
-  if (!formulario) return;
-
-  formulario.addEventListener("submit", (evento) => {
-    if (!formulario.getAttribute("action").includes("TU_ID_DE_FORMSPREE")) return;
-    evento.preventDefault();
-    document.getElementById("formulario-aviso").hidden = false;
   });
 }
 
@@ -896,7 +942,6 @@ function pintarDestacado() {
     <div class="aparece">
       <p class="ficha-texto">${escaparHTML(datos)}</p>
       <h2${langDe(corto.titulo)}>${escaparHTML(titulo)}</h2>
-      ${avisoEjemplo(corto)}
       <p class="corto__sinopsis"${langDe(corto.sinopsis)}>${escaparHTML(enIdioma(corto.sinopsis))}</p>
       <div class="destacado__acciones">
         <a class="boton boton--secundario" href="${url}">${t("inicio.verFicha")}</a>
@@ -904,12 +949,18 @@ function pintarDestacado() {
     </div>
   `;
 
-  // El botón del hero lleva al tráiler del último corto. Si aún no tiene, a su ficha.
-  const botonHero = document.getElementById("hero-trailer");
+  // El botón del hero lleva a ver el último corto: "Ver {titulo}" si está el
+  // corto completo, "Ver tráiler" si solo hay tráiler y, si no hay ninguno de
+  // los dos, "Ver último corto" a su ficha. El ancla (#ver o #trailer) hace
+  // que la ficha se abra directamente en el reproductor.
+  const botonHero = document.getElementById("hero-boton");
   if (botonHero) {
-    botonHero.href = corto.trailerUrl ? `${url}#trailer` : url;
-    botonHero.dataset.i18n = corto.trailerUrl ? "inicio.verTrailer" : "inicio.verUltimo";
-    botonHero.textContent = t(botonHero.dataset.i18n);
+    const ancla = queSePuedeVer(corto);
+    const claves = { ver: "inicio.verCorto", trailer: "inicio.verTrailer" };
+    botonHero.href = ancla ? `${url}#${ancla}` : url;
+    botonHero.dataset.titulo = titulo; // Rellena el {titulo} de "Ver {titulo}"
+    botonHero.dataset.i18n = claves[ancla] || "inicio.verUltimo";
+    botonHero.textContent = t(botonHero.dataset.i18n, botonHero.dataset);
   }
 }
 
@@ -918,7 +969,7 @@ function pintarDestacado() {
    8. LISTADO DE CORTOS Y FILTROS
    -------------------------------------------------------------------------- */
 
-// La rellena iniciarFiltros. Así, al repintar el listado (por ejemplo, al
+// La rellena iniciarFiltros. Así, al repintar el listado (como al
 // cambiar de idioma) se vuelven a aplicar los filtros que hubiera.
 let aplicarFiltros = null;
 
@@ -935,6 +986,11 @@ function pintarListado() {
     return;
   }
 
+  // Con pocos cortos, los pósters (y el título de la página) van centrados
+  const pocos = cortos.length < POCOS_CORTOS;
+  lista.classList.toggle("rejilla-cortos--pocos", pocos);
+  lista.closest(".listado")?.classList.toggle("listado--pocos", pocos);
+
   // data-slug permite a los filtros encontrar la tarjeta de cada corto
   lista.innerHTML = cortos
     .map((corto) => {
@@ -949,15 +1005,43 @@ function pintarListado() {
               <p class="tarjeta__datos">${escaparHTML(corto.anio)} · ${escaparHTML(enIdioma(corto.duracion))}</p>
               <span class="tarjeta__accion" aria-hidden="true">${t("cortos.verCorto")}</span>
             </div>
-            ${etiquetaEjemplo(corto)}
             ${etiquetaNuevo(corto)}
           </a>
         </li>
       `;
     })
-    .join("");
+    .join("") + htmlDeTarjetaProxima();
 
   if (aplicarFiltros) aplicarFiltros();
+}
+
+// Tarjeta "Próximamente" al final del listado, con el póster de PROXIMO
+// (data.js) y enlace a proximamente.html. No es un corto: no lleva data-slug,
+// así que los filtros, el buscador y el número de cortos no la tienen en cuenta.
+// El póster se ve entero (4:5) dentro de un hueco del mismo tamaño que los
+// demás pósters (2:3), para que la rejilla siga alineada.
+function htmlDeTarjetaProxima() {
+  if (!hayDato(DATOS_PROXIMO.titulo) || !hayDato(DATOS_PROXIMO.imagen)) return "";
+
+  const titulo = enIdioma(DATOS_PROXIMO.titulo);
+  const estado = hayDato(DATOS_PROXIMO.estado)
+    ? `<p class="tarjeta__datos"${langDe(DATOS_PROXIMO.estado)}>${escaparHTML(enIdioma(DATOS_PROXIMO.estado))}</p>`
+    : "";
+
+  return `
+    <li class="tarjeta tarjeta--proxima aparece" data-tarjeta-proxima>
+      <a class="tarjeta__enlace" href="./proximamente.html">
+        <img class="tarjeta__poster tarjeta__poster--proxima" src="${escaparHTML(DATOS_PROXIMO.imagen)}"
+             alt="${escaparHTML(t("cortos.poster", { titulo }))}" width="1122" height="1402" loading="lazy">
+        <div class="tarjeta__velo">
+          <h2 class="tarjeta__titulo"${langDe(DATOS_PROXIMO.titulo)}>${escaparHTML(titulo)}</h2>
+          ${estado}
+          <span class="tarjeta__accion" aria-hidden="true">${t("cortos.verProximo")}</span>
+        </div>
+        <span class="etiqueta-proxima">${t("menu.proximamente")}</span>
+      </a>
+    </li>
+  `;
 }
 
 // En una pantalla táctil no hay "pasar el ratón". El primer toque muestra los datos
@@ -1003,10 +1087,12 @@ function iniciarTarjetasTactiles() {
 // Buscador y filtros de cortos.html. Las tarjetas no se vuelven a crear: solo se
 // ocultan las que no encajan y se reordenan las demás. El estado se guarda en la
 // URL (?q=&anio=&duracion=&orden=) para que se pueda compartir una búsqueda.
+// Con menos de POCOS_CORTOS cortos no hacen falta: el formulario sigue oculto
+// (viene con hidden en el HTML) y no se filtra nada.
 function iniciarFiltros() {
   const formulario = document.getElementById("filtros");
   const lista = document.getElementById("lista-cortos");
-  if (!formulario || !lista || LISTA_CORTOS.length === 0) return;
+  if (!formulario || !lista || LISTA_CORTOS.length < POCOS_CORTOS) return;
 
   const resultado = document.getElementById("filtros-resultado");
   const sinResultados = document.getElementById("sin-resultados");
@@ -1052,9 +1138,10 @@ function iniciarFiltros() {
       );
     }
 
-    // Se ocultan todas las tarjetas y se vuelven a mostrar, en el orden pedido,
-    // las que pasan el filtro (append mueve un elemento que ya existe al final)
-    const tarjetas = [...lista.children];
+    // Se ocultan todas las tarjetas de cortos y se vuelven a mostrar, en el orden
+    // pedido, las que pasan el filtro (append mueve un elemento que ya existe al
+    // final). La tarjeta "Próximamente" no se filtra y siempre va la última.
+    const tarjetas = [...lista.children].filter((tarjeta) => tarjeta.dataset.slug);
     tarjetas.forEach((tarjeta) => {
       tarjeta.hidden = true;
     });
@@ -1063,6 +1150,8 @@ function iniciarFiltros() {
       tarjeta.hidden = false;
       lista.append(tarjeta);
     });
+    const tarjetaProxima = lista.querySelector("[data-tarjeta-proxima]");
+    if (tarjetaProxima) lista.append(tarjetaProxima);
 
     resultado.textContent = textoDeResultados(cortos.length, LISTA_CORTOS.length);
     lista.hidden = cortos.length === 0;
@@ -1140,6 +1229,16 @@ function pintarDetalle() {
     .querySelector('meta[name="description"]')
     .setAttribute("content", resumir(sinopsis, 155));
 
+  // Al cambiar de idioma se vuelve a pintar toda la ficha. Si el vídeo estaba en
+  // marcha, se apunta por dónde iba para que el reproductor nuevo siga ahí.
+  const videoAnterior = caja.querySelector(".reproductor");
+  const estadoVideo = videoAnterior && {
+    tiempo: videoAnterior.currentTime,
+    sonando: !videoAnterior.paused && !videoAnterior.ended,
+    silenciado: videoAnterior.muted,
+    volumen: videoAnterior.volume,
+  };
+
   caja.innerHTML = `
     <article class="corto contenedor">
       <a class="enlace corto__volver" href="./cortos.html">${t("corto.volver")}</a>
@@ -1150,28 +1249,16 @@ function pintarDetalle() {
         <div class="aparece">
           <p class="ficha-texto">${escaparHTML(corto.anio)} · ${escaparHTML(enIdioma(corto.duracion))}</p>
           <h1${langDe(corto.titulo)}>${escaparHTML(titulo)}</h1>
-          ${avisoEjemplo(corto)}
           <p class="corto__sinopsis"${langDe(corto.sinopsis)}>${escaparHTML(sinopsis)}</p>
+          ${hayDato(corto.inspiracion)
+            ? `<p class="corto__inspiracion"${langDe(corto.inspiracion)}>${escaparHTML(enIdioma(corto.inspiracion))}</p>`
+            : ""}
           <div class="compartir" id="compartir"></div>
         </div>
       </div>
 
-      <section class="corto__bloque aparece" id="trailer">
-        <h2>${t("corto.trailer")}</h2>
-        ${htmlDelTrailer(corto)}
-      </section>
-
-      <section class="corto__bloque aparece">
-        <h2>${t("corto.ficha")}</h2>
-        <dl class="ficha-tecnica">
-          ${filaFicha(t("corto.direccion"), enIdioma(corto.direccion))}
-          ${filaFicha(t("corto.guion"), enIdioma(corto.guion))}
-          ${filaFicha(t("corto.reparto"), textoReparto(corto.reparto))}
-          ${filaFicha(t("corto.duracion"), enIdioma(corto.duracion))}
-          ${filaFicha(t("corto.anio"), corto.anio)}
-        </dl>
-      </section>
-
+      ${htmlDelVideo(corto)}
+      ${htmlDeLaFicha(corto)}
       ${htmlDeLaGaleria(corto)}
       ${htmlDeFestivales(corto)}
       ${htmlDeNavegacion(corto)}
@@ -1181,16 +1268,91 @@ function pintarDetalle() {
   pintarCompartir(corto, false);
   iniciarLightbox(corto);
 
+  const videoNuevo = caja.querySelector(".reproductor");
+  if (estadoVideo && videoNuevo) {
+    videoNuevo.muted = estadoVideo.silenciado;
+    videoNuevo.volume = estadoVideo.volumen;
+    if (estadoVideo.tiempo > 0) videoNuevo.currentTime = estadoVideo.tiempo;
+    if (estadoVideo.sonando) videoNuevo.play().catch(() => {});
+  }
+
   // El contenido se acaba de crear, así que el navegador no ha podido saltar por sí
-  // solo a #trailer (el botón "Ver tráiler" del inicio enlaza ahí). Solo se hace la
+  // solo a #ver o #trailer (el botón del inicio enlaza ahí). Solo se hace la
   // primera vez: al repintar por un cambio de idioma, la página se queda donde está.
-  if (!caja.dataset.pintado && window.location.hash === "#trailer") {
-    document.getElementById("trailer").scrollIntoView();
+  const ancla = window.location.hash.slice(1);
+  if (!caja.dataset.pintado && (ancla === "ver" || ancla === "trailer")) {
+    document.getElementById(ancla)?.scrollIntoView();
   }
   caja.dataset.pintado = "si";
 }
 
+// Bloque para ver el corto. Con video (data.js), el corto completo en un
+// <video> de la propia web; con trailerUrl, el tráiler de YouTube. Si no hay
+// ninguno de los dos, no se muestra nada.
+function htmlDelVideo(corto) {
+  const titulo = enIdioma(corto.titulo);
+  const tipo = queSePuedeVer(corto);
+
+  if (tipo === "ver") {
+    // El primer fotograma hace de portada hasta que se le da al play.
+    // preload="metadata" solo descarga la duración y el tamaño del vídeo: el
+    // archivo entero no se descarga hasta que alguien lo reproduce.
+    const portada = (corto.fotogramas || []).find(hayDato);
+    return `
+      <section class="corto__bloque aparece" id="ver">
+        <h2>${t("corto.completo")}</h2>
+        <video class="video-16-9 reproductor" src="${escaparHTML(corto.video)}"
+               controls playsinline preload="metadata"
+               ${portada ? `poster="${escaparHTML(portada)}"` : ""}
+               aria-label="${escaparHTML(t("corto.videoDe", { titulo }))}"></video>
+      </section>
+    `;
+  }
+
+  // iframe de youtube-nocookie. La referrerpolicy es necesaria: sin ella,
+  // YouTube puede negarse a reproducir el vídeo.
+  if (tipo === "trailer") {
+    return `
+      <section class="corto__bloque aparece" id="trailer">
+        <h2>${t("corto.trailer")}</h2>
+        <iframe class="video-16-9"
+                src="https://www.youtube-nocookie.com/embed/${idDeYoutube(corto.trailerUrl)}?rel=0"
+                title="${escaparHTML(t("corto.trailerDe", { titulo }))}"
+                loading="lazy"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
+      </section>
+    `;
+  }
+
+  return "";
+}
+
+// Ficha técnica: solo las filas que tienen dato. Si no hay ninguna, no se muestra.
+function htmlDeLaFicha(corto) {
+  const filas = [
+    filaFicha(t("corto.direccion"), enIdioma(corto.direccion)),
+    filaFicha(t("corto.guion"), enIdioma(corto.guion)),
+    filaFicha(t("corto.produccion"), enIdioma(corto.produccion)),
+    filaFicha(t("corto.reparto"), textoReparto(corto.reparto)),
+    filaFicha(t("corto.duracion"), enIdioma(corto.duracion)),
+    filaFicha(t("corto.anio"), corto.anio),
+  ].join("");
+
+  if (!filas) return "";
+
+  return `
+    <section class="corto__bloque aparece">
+      <h2>${t("corto.ficha")}</h2>
+      <dl class="ficha-tecnica">${filas}</dl>
+    </section>
+  `;
+}
+
 function filaFicha(nombre, valor) {
+  if (!hayDato(valor)) return "";
+
   return `
     <div class="ficha-tecnica__fila">
       <dt>${nombre}</dt>
@@ -1199,28 +1361,8 @@ function filaFicha(nombre, valor) {
   `;
 }
 
-// iframe de youtube-nocookie. La referrerpolicy es necesaria: sin ella, YouTube
-// puede negarse a reproducir el vídeo.
-function htmlDelTrailer(corto) {
-  const id = idDeYoutube(corto.trailerUrl);
-
-  if (!id) {
-    return `<p class="trailer-pendiente">${t("corto.trailerPendiente")}</p>`;
-  }
-
-  return `
-    <iframe class="video-16-9"
-            src="https://www.youtube-nocookie.com/embed/${id}?rel=0"
-            title="${escaparHTML(t("corto.trailerDe", { titulo: enIdioma(corto.titulo) }))}"
-            loading="lazy"
-            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen></iframe>
-  `;
-}
-
 function htmlDeLaGaleria(corto) {
-  if (!corto.fotogramas || corto.fotogramas.length === 0) return "";
+  if (!hayDato(corto.fotogramas)) return "";
 
   const titulo = enIdioma(corto.titulo);
   const miniaturas = corto.fotogramas
@@ -1247,9 +1389,10 @@ function htmlDeLaGaleria(corto) {
 }
 
 function htmlDeFestivales(corto) {
-  if (!corto.festivales || corto.festivales.length === 0) return "";
+  if (!hayDato(corto.festivales)) return "";
 
   const filas = corto.festivales
+    .filter(hayDato)
     .map((festival) => `<li${langDe(festival)}>${escaparHTML(enIdioma(festival))}</li>`)
     .join("");
 
@@ -1263,7 +1406,7 @@ function htmlDeFestivales(corto) {
 
 // Enlaces al corto anterior y al siguiente, por orden de estreno: "Anterior" es
 // el que salió antes y "Siguiente", el que salió después. El primero y el
-// último solo tienen uno de los dos.
+// último solo tienen uno de los dos, y si no hay otro corto no se muestra nada.
 function htmlDeNavegacion(corto) {
   const cortos = cortosPorFecha(); // Del más reciente al más antiguo
   const posicion = cortos.indexOf(corto);
@@ -1456,15 +1599,16 @@ function iniciarLightbox(corto) {
 
 /* --------------------------------------------------------------------------
    11. PRENSA
-   En prensa.html, las descripciones, los datos clave y la galería salen de
-   data.js (ESTUDIO, CONTACTO y SHORTS). El logotipo y el contacto de prensa
-   están escritos en el propio HTML.
+   En prensa.html, las descripciones, los datos clave y las galerías salen de
+   data.js (ESTUDIO, CONTACTO, SHORTS y PROXIMO). El logotipo y el contacto de
+   prensa están escritos en el propio HTML. Una sección sin datos no se muestra.
    -------------------------------------------------------------------------- */
 
 function pintarPrensa() {
   pintarDescripciones();
   pintarDatosClave();
   pintarGaleriaPrensa();
+  pintarProximoPrensa();
 }
 
 // Descripción corta y larga del estudio, en español y en inglés a la vez
@@ -1480,10 +1624,11 @@ function pintarDescripciones() {
   ];
 
   const bloques = tipos
+    .filter((tipo) => hayDato(tipo.textos))
     .map((tipo) => {
       // Si alguien escribe un texto normal en lugar de { es, en }, cuenta como español
       const textos = typeof tipo.textos === "object" ? tipo.textos : { es: tipo.textos };
-      const versiones = IDIOMAS.filter((lengua) => textos[lengua])
+      const versiones = IDIOMAS.filter((lengua) => hayDato(textos[lengua]))
         .map((lengua) => `
           <div class="descripcion__version">
             <p class="ficha-texto">${t(`prensa.${lengua}`)}</p>
@@ -1503,10 +1648,8 @@ function pintarDescripciones() {
     })
     .join("");
 
-  caja.innerHTML = `
-    ${DATOS_ESTUDIO.ejemplo ? `<p class="prensa__ejemplo"><span class="etiqueta-ejemplo">${t("comun.contenidoEjemplo")}</span></p>` : ""}
-    ${bloques}
-  `;
+  caja.closest("section").hidden = !bloques;
+  caja.innerHTML = bloques;
 
   // Cada botón copia el párrafo que tiene justo encima
   caja.querySelectorAll(".descripcion__version button").forEach((boton) => {
@@ -1519,40 +1662,36 @@ function pintarDescripciones() {
 }
 
 // Fundación, ciudad, número de cortos y número de selecciones en festivales.
-// Los dos últimos se cuentan solos a partir de SHORTS.
+// Los dos últimos se cuentan solos a partir de SHORTS. Los que no tienen dato
+// (o son cero) no se muestran; si no queda ninguno, tampoco la sección.
 function pintarDatosClave() {
   const caja = document.getElementById("prensa-datos");
   if (!caja) return;
 
   const festivales = LISTA_CORTOS.reduce(
-    (total, corto) => total + (corto.festivales ? corto.festivales.length : 0),
+    (total, corto) => total + [].concat(corto.festivales ?? []).filter(hayDato).length,
     0
   );
-  const hayEjemplos = DATOS_ESTUDIO.ejemplo || LISTA_CORTOS.some((corto) => corto.ejemplo);
 
   const datos = [
     { nombre: t("prensa.fundacion"), valor: DATOS_ESTUDIO.fundacion },
     { nombre: t("prensa.ciudad"), valor: DATOS_CONTACTO.ciudad },
-    { nombre: t("prensa.cortos"), valor: LISTA_CORTOS.length },
-    { nombre: t("prensa.festivales"), valor: festivales },
-  ];
+    { nombre: t("prensa.cortos"), valor: LISTA_CORTOS.length || "" },
+    { nombre: t("prensa.festivales"), valor: festivales || "" },
+  ].filter((dato) => hayDato(dato.valor));
+
+  caja.closest("section").hidden = datos.length === 0;
 
   const filas = datos
-    .map((dato) => {
-      const hayValor = dato.valor || dato.valor === 0;
-      return `
-        <div class="datos-clave__dato">
-          <dt>${dato.nombre}</dt>
-          <dd${hayValor ? "" : ' class="datos-clave__pendiente"'}>${escaparHTML(hayValor ? enIdioma(dato.valor) : t("comun.pendiente"))}</dd>
-        </div>
-      `;
-    })
+    .map((dato) => `
+      <div class="datos-clave__dato">
+        <dt>${dato.nombre}</dt>
+        <dd>${escaparHTML(enIdioma(dato.valor))}</dd>
+      </div>
+    `)
     .join("");
 
-  caja.innerHTML = `
-    ${hayEjemplos ? `<p class="prensa__ejemplo"><span class="etiqueta-ejemplo">${t("comun.contenidoEjemplo")}</span></p>` : ""}
-    <dl class="datos-clave aparece">${filas}</dl>
-  `;
+  caja.innerHTML = filas ? `<dl class="datos-clave aparece">${filas}</dl>` : "";
 }
 
 // Pósters y fotogramas de todos los cortos, para descargar. Si el corto tiene
@@ -1561,6 +1700,8 @@ function pintarDatosClave() {
 function pintarGaleriaPrensa() {
   const caja = document.getElementById("prensa-galeria");
   if (!caja) return;
+
+  caja.closest("section").hidden = LISTA_CORTOS.length === 0;
 
   caja.innerHTML = cortosPorFecha()
     .map((corto) => {
@@ -1589,7 +1730,6 @@ function pintarGaleriaPrensa() {
           <h3 class="prensa-corto__titulo">
             <span${langDe(corto.titulo)}>${escaparHTML(titulo)}</span>
             <span class="prensa-corto__anio">${escaparHTML(corto.anio)}</span>
-            ${etiquetaEjemplo(corto)}
           </h3>
           <ul class="prensa-galeria">${imagenes.map(htmlDeDescarga).join("")}</ul>
         </section>
@@ -1598,13 +1738,50 @@ function pintarGaleriaPrensa() {
     .join("");
 }
 
+// Póster del próximo corto (PROXIMO) para descargar, en su propia sección.
+// La sección se muestra u oculta desde pintarProximo (data-proximo-si-hay).
+function pintarProximoPrensa() {
+  const caja = document.getElementById("prensa-proximo-galeria");
+  if (!caja) return;
+
+  if (!hayDato(DATOS_PROXIMO.titulo) || !hayDato(DATOS_PROXIMO.imagen)) {
+    caja.innerHTML = "";
+    return;
+  }
+
+  const titulo = enIdioma(DATOS_PROXIMO.titulo);
+  // Nombre del archivo descargado: "SentenZia" → "sentenzia-poster.jpg"
+  const nombreArchivo = normalizar(titulo).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const poster = {
+    ruta: DATOS_PROXIMO.imagen,
+    pie: t("prensa.poster"),
+    etiqueta: t("prensa.descargarPoster", { titulo }),
+    archivo: `${nombreArchivo}-poster`,
+    ancho: 1122,
+    alto: 1402,
+  };
+
+  caja.innerHTML = `
+    <section class="prensa-corto aparece">
+      <h3 class="prensa-corto__titulo">
+        <span${langDe(DATOS_PROXIMO.titulo)}>${escaparHTML(titulo)}</span>
+        ${hayDato(DATOS_PROXIMO.estado)
+          ? `<span class="prensa-corto__anio"${langDe(DATOS_PROXIMO.estado)}>${escaparHTML(enIdioma(DATOS_PROXIMO.estado))}</span>`
+          : ""}
+      </h3>
+      <ul class="prensa-galeria">${htmlDeDescarga(poster)}</ul>
+    </section>
+  `;
+}
+
 // Una miniatura que descarga la imagen. El atributo download le pone un nombre
-// claro al archivo (por ejemplo, repique-fotograma-2.jpg).
+// claro al archivo (como maleficio-fotograma-2.jpg). ancho y alto solo sirven
+// para reservar el hueco con la proporción correcta mientras carga.
 function htmlDeDescarga(imagen) {
   const destino = imagen.alta || imagen.ruta;
   const extension = destino.split(".").pop();
-  const ancho = imagen.esPoster ? 800 : 1280;
-  const alto = imagen.esPoster ? 1200 : 720;
+  const ancho = imagen.ancho || (imagen.esPoster ? 800 : 1280);
+  const alto = imagen.alto || (imagen.esPoster ? 1200 : 720);
 
   return `
     <li>
@@ -1620,29 +1797,115 @@ function htmlDeDescarga(imagen) {
 
 /* --------------------------------------------------------------------------
    12. PRÓXIMAMENTE
+   proximamente.html, el aviso del inicio y la sección de prensa salen de
+   PROXIMO (data.js). En el HTML se marcan con dos atributos, y vienen con hidden:
+     data-proximo="campo"        se rellena con ese dato y se muestra si lo hay
+     data-proximo-si-hay="campo" solo se muestra si ese dato existe
+   Con data-proximo="imagen", el dato es la ruta del póster (src); si además
+   lleva data-proximo-alt, su texto alternativo sale de PROXIMO.imagenAlt.
    -------------------------------------------------------------------------- */
 
-// Las líneas del teaser aparecen una a una
-function iniciarTeaser() {
-  const lineas = document.querySelectorAll(".teaser__linea");
-
-  lineas.forEach((linea, indice) => {
-    const espera = MOVIMIENTO_REDUCIDO ? 0 : 500 + indice * 1800;
-    setTimeout(() => linea.classList.add("visible"), espera);
-  });
+// Momento del estreno en milisegundos, o NaN si no hay fecha o no se entiende
+function fechaDelProximo() {
+  return hayDato(DATOS_PROXIMO.fecha) ? new Date(DATOS_PROXIMO.fecha).getTime() : NaN;
 }
 
-// La fecha se cambia en proximamente.html (atributo data-fecha).
-// Para quitar la cuenta atrás, basta con borrar ese bloque del HTML.
+// El título con las letras de "resaltar" envueltas en <span class="resalte">,
+// que el CSS pinta en rojo: SentenZia → Senten<span>Z</span>ia
+function htmlDelTituloResaltado(titulo, resaltar) {
+  const letras = String(resaltar || "");
+  return [...titulo]
+    .map((letra) => {
+      const html = escaparHTML(letra);
+      return letras.includes(letra) ? `<span class="resalte">${html}</span>` : html;
+    })
+    .join("");
+}
+
+function pintarProximo() {
+  const hayProximo = hayDato(DATOS_PROXIMO.titulo);
+  // Sin título no se enseña nada del próximo corto, aunque haya otros datos.
+  // Una fecha que no se entiende cuenta como vacía.
+  const valores = hayProximo
+    ? { ...DATOS_PROXIMO, fecha: Number.isNaN(fechaDelProximo()) ? "" : DATOS_PROXIMO.fecha }
+    : {};
+
+  document.querySelectorAll("[data-proximo-si-hay]").forEach((bloque) => {
+    bloque.hidden = !hayDato(valores[bloque.dataset.proximoSiHay]);
+  });
+
+  document.querySelectorAll("[data-proximo]").forEach((elemento) => {
+    const campo = elemento.dataset.proximo;
+    const valor = valores[campo];
+    elemento.hidden = !hayDato(valor);
+    if (elemento.hidden) return;
+
+    if (campo === "imagen") {
+      // Al repintar por un cambio de idioma la ruta es la misma: no se toca,
+      // para no volver a cargar la imagen
+      if (elemento.getAttribute("src") !== valor) elemento.src = valor;
+      if (elemento.hasAttribute("data-proximo-alt")) elemento.alt = enIdioma(valores.imagenAlt);
+      return;
+    }
+
+    const texto = enIdioma(valor);
+    if (langDe(valor)) {
+      elemento.lang = "es";
+    } else {
+      elemento.removeAttribute("lang");
+    }
+
+    // Si el título lleva letras resaltadas, queda partido en varios <span>: el
+    // aria-label hace que el lector de pantalla lo lea como una sola palabra
+    if (campo === "titulo" && hayDato(valores.resaltar)) {
+      elemento.innerHTML = htmlDelTituloResaltado(texto, valores.resaltar);
+      elemento.setAttribute("aria-label", texto);
+    } else {
+      elemento.textContent = texto;
+    }
+  });
+
+  // En proximamente.html: con póster, póster y texto lado a lado y el título
+  // pequeño (el póster ya lo lleva); sin póster, solo el texto con el título en
+  // grande. Además, el título de la pestaña y la descripción para buscadores
+  // pasan a ser los del próximo corto, como en la ficha de cada corto.
+  const bloque = document.querySelector(".proximo");
+  if (bloque && hayProximo) {
+    bloque.classList.toggle("proximo--con-poster", hayDato(valores.imagen));
+    document.title = `${enIdioma(valores.titulo)} · ${t("proximamente.tituloPagina")}`;
+    if (hayDato(valores.sinopsis)) {
+      document
+        .querySelector('meta[name="description"]')
+        .setAttribute("content", resumir(enIdioma(valores.sinopsis), 155));
+    }
+  }
+}
+
+// El póster de proximamente.html entra con un fundido desde negro, pero solo
+// cuando ya ha cargado: si empezara antes, se vería aparecer de golpe a medias.
+// El fundido lo hace el CSS al recibir la clase "cargado" (sin movimiento
+// reducido, aparece sin más). Si la imagen falla, se muestra igualmente.
+function iniciarPosterProximo() {
+  const poster = document.querySelector(".proximo__poster");
+  const imagen = poster?.querySelector("img");
+  if (!imagen || !imagen.getAttribute("src")) return;
+
+  const mostrar = () => poster.classList.add("cargado");
+  if (imagen.complete) {
+    mostrar();
+  } else {
+    imagen.addEventListener("load", mostrar, { once: true });
+    imagen.addEventListener("error", mostrar, { once: true });
+  }
+}
+
+// Cuenta atrás hasta PROXIMO.fecha. Sin fecha, su bloque no se muestra.
 function iniciarCuentaAtras() {
   const caja = document.getElementById("cuenta-atras");
   if (!caja) return;
 
-  const objetivo = new Date(caja.dataset.fecha).getTime();
-  if (Number.isNaN(objetivo)) {
-    caja.hidden = true;
-    return;
-  }
+  const objetivo = fechaDelProximo();
+  if (!hayDato(DATOS_PROXIMO.titulo) || Number.isNaN(objetivo)) return;
 
   const poner = (unidad, valor) => {
     caja.querySelector(`[data-unidad="${unidad}"]`).textContent = String(valor).padStart(2, "0");
@@ -1673,7 +1936,57 @@ function iniciarCuentaAtras() {
 
 
 /* --------------------------------------------------------------------------
-   13. EFECTOS
+   13. EQUIPO
+   En estudio.html, una ficha por cada persona de EQUIPO (data.js). Quien no
+   tiene foto aparece con sus iniciales dentro de un círculo.
+   -------------------------------------------------------------------------- */
+
+// Las iniciales salen de las dos primeras palabras del nombre: "Daniel López" → "DL"
+function inicialesDe(nombre) {
+  return nombre
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((palabra) => palabra.charAt(0))
+    .join("")
+    .toUpperCase();
+}
+
+function pintarEquipo() {
+  const lista = document.getElementById("equipo");
+  if (!lista) return;
+
+  const personas = LISTA_EQUIPO.filter((persona) => persona && hayDato(persona.nombre));
+  lista.closest("section").hidden = personas.length === 0;
+
+  lista.innerHTML = personas
+    .map((persona) => {
+      const nombre = String(persona.nombre).trim();
+      // Las iniciales son decorativas: el nombre ya está escrito debajo
+      const retrato = hayDato(persona.foto)
+        ? `<img class="equipo__retrato" src="${escaparHTML(persona.foto)}"
+                alt="${escaparHTML(t("estudio.retrato", { nombre }))}" width="600" height="600" loading="lazy">`
+        : `<span class="equipo__retrato equipo__iniciales" aria-hidden="true">${escaparHTML(
+            hayDato(persona.iniciales) ? persona.iniciales : inicialesDe(nombre)
+          )}</span>`;
+      const rol = hayDato(persona.rol)
+        ? `<p class="equipo__rol"${langDe(persona.rol)}>${escaparHTML(enIdioma(persona.rol))}</p>`
+        : "";
+
+      return `
+        <li class="aparece">
+          ${retrato}
+          <h3 class="equipo__nombre">${escaparHTML(nombre)}</h3>
+          ${rol}
+        </li>
+      `;
+    })
+    .join("");
+}
+
+
+/* --------------------------------------------------------------------------
+   14. EFECTOS
    -------------------------------------------------------------------------- */
 
 // Aparición de los elementos .aparece al entrar en pantalla
@@ -1699,7 +2012,8 @@ function iniciarApariciones() {
   elementos.forEach((elemento) => observador.observe(elemento));
 }
 
-// Parpadeo ocasional, a intervalos irregulares de entre 12 y 30 segundos
+// Parpadeo ocasional, a intervalos irregulares de entre 12 y 30 segundos.
+// No salta mientras se está viendo un vídeo, para no oscurecerlo.
 function iniciarParpadeo() {
   if (MOVIMIENTO_REDUCIDO) return;
 
@@ -1714,7 +2028,7 @@ function iniciarParpadeo() {
   function programar() {
     const espera = 12000 + Math.random() * 18000;
     setTimeout(() => {
-      if (!document.hidden) capa.classList.add("activo");
+      if (!document.hidden && !hayVideoSonando()) capa.classList.add("activo");
       programar();
     }, espera);
   }
@@ -1758,7 +2072,7 @@ function iniciarFundidos() {
 
 
 /* --------------------------------------------------------------------------
-   14. PUESTA EN MARCHA
+   15. PUESTA EN MARCHA
    Primero se traducen los textos y se pinta el contenido, y después los
    efectos, porque las apariciones tienen que encontrar en la página los
    elementos recién creados. Si una función falla, el error se muestra en la
@@ -1779,8 +2093,10 @@ function ejecutar(funciones) {
 const PINTAR_TEXTOS = [
   aplicarTextosFijos,
   pintarDestacado,
+  pintarProximo,
   pintarListado,
   pintarDetalle,
+  pintarEquipo,
   pintarPrensa,
 ];
 
@@ -1792,16 +2108,17 @@ ejecutar([
   iniciarFondoCabecera,
   iniciarSonido,
   iniciarContacto,
-  iniciarFormulario,
   iniciarVideoHero,
   iniciarLinterna,
   pintarDestacado,
+  pintarProximo,
   pintarListado,
   iniciarTarjetasTactiles,
   iniciarFiltros,
   pintarDetalle,
+  pintarEquipo,
   pintarPrensa,
-  iniciarTeaser,
+  iniciarPosterProximo,
   iniciarCuentaAtras,
   iniciarParpadeo,
   iniciarFundidos,

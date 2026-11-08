@@ -1,40 +1,42 @@
 /* ==========================================================================
    DATOS DE LA WEB
-   Este es el único archivo que hay que tocar para añadir cortos o cambiar
-   los datos de contacto y de prensa. No hace falta editar ningún HTML.
+   Este es el único archivo que hay que tocar para añadir cortos, cambiar el
+   próximo estreno o el equipo, o rellenar los datos de contacto y de prensa.
+   No hace falta editar ningún HTML.
 
    TEXTOS EN DOS IDIOMAS
    Cualquier texto de aquí (titulo, sinopsis, duracion, festivales…) puede ser:
-     - un texto normal:          titulo: "Repique"
-     - un objeto con los dos:    titulo: { es: "Repique", en: "The Tolling" }
+     - un texto normal:          titulo: "Maleficio"
+     - un objeto con los dos:    estado: { es: "En desarrollo", en: "In development" }
    Si falta el inglés, la web en inglés muestra el español. Así que no hace
    falta traducirlo todo a la vez.
+
+   DATOS VACÍOS
+   Un dato vacío ("" o []) no se muestra: desaparece su bloque entero, sin
+   textos de relleno. En cuanto lo escribas aquí, aparece en la web.
    ========================================================================== */
 
 
 /* --------------------------------------------------------------------------
-   CONTACTO  ⚠️ PENDIENTE DE RELLENAR
-   Mientras un campo esté vacío, su enlace no aparece en el pie y en las
-   páginas de contacto y de prensa se muestra como "pendiente". El Instagram
-   ya está puesto en los HTML porque es un dato conocido.
+   CONTACTO
+   Mientras un campo esté vacío, su enlace no aparece en ninguna página.
+   El Instagram está escrito directamente en los HTML.
    -------------------------------------------------------------------------- */
 const CONTACTO = {
-  email: "",       // Ejemplo: "hola@tudominio.com"
-  emailPrensa: "", // Opcional, para la página de prensa. Si está vacío, se usa el email de arriba
-  whatsapp: "",    // Número con prefijo de país, sin "+" ni espacios. Ejemplo: "34XXXXXXXXX"
-  ciudad: "",      // Ejemplo: "Sevilla"
+  email: "",       // Formato: "hola@tudominio.com"
+  emailPrensa: "", // Opcional, solo para la página de prensa. Si está vacío, se usa el de arriba
+  whatsapp: "",    // Con prefijo de país, sin "+" ni espacios. Formato: "34612345678"
+  ciudad: "",      // Formato: "Sevilla"
 };
 
 
 /* --------------------------------------------------------------------------
-   ESTUDIO (página de prensa)  ⚠️ CONTENIDO DE EJEMPLO
-   La descripción larga y el año de fundación son inventados. Mientras quede
-   "ejemplo: true", la página de prensa los marca con la etiqueta "Ejemplo".
-   El número de cortos y de festivales se calcula solo a partir de SHORTS.
+   ESTUDIO (página de prensa)
+   El número de cortos y de selecciones en festivales se calcula solo a partir
+   de SHORTS.
    -------------------------------------------------------------------------- */
 const ESTUDIO = {
-  ejemplo: true, // Borra esta línea cuando los textos y el año sean los reales
-  fundacion: 2023,
+  fundacion: "", // Año de fundación, como 2025. Vacío: no se muestra
   // Una frase, para notas breves y programas de festival
   descripcionCorta: {
     es: "Dark Paradox Studios es una productora independiente de cortometrajes de terror.",
@@ -42,23 +44,44 @@ const ESTUDIO = {
   },
   // Un párrafo, para artículos y dosieres
   descripcionLarga: {
-    es: "Dark Paradox Studios es una productora independiente de cortometrajes de terror. Trabaja con equipos pequeños, pocas luces y mucha paciencia para construir un miedo que no depende de los sustos, sino de la duda que se queda después: un telefonillo que suena de madrugada, una campana bajo el agua, un pasillo que cruje en el orden equivocado. Sus cortos recorren festivales de cine fantástico y de terror, y su próximo proyecto ya está en desarrollo.",
-    en: "Dark Paradox Studios is an independent production company making horror short films. It works with small crews, few lights and plenty of patience to build a kind of fear that doesn't rely on jump scares, but on the doubt that lingers afterwards: an intercom buzzing in the middle of the night, a bell beneath the water, a hallway that creaks in the wrong order. Its films travel the fantasy and horror festival circuit, and its next project is already in development.",
+    es: "Dark Paradox Studios es una productora independiente de cortometrajes de terror. Su primer corto, «Maleficio», sigue a un chico que una tarde cualquiera enciende la tele y encuentra en la pantalla un símbolo que no debería estar ahí; desde ese momento, algo empieza a moverse por la casa. Su siguiente cortometraje, «SentenZia», ya está en desarrollo.",
+    en: "Dark Paradox Studios is an independent production company making horror short films. Its first short, “Maleficio”, follows a boy who turns on the TV one ordinary afternoon and finds a symbol on the screen that shouldn't be there; from that moment on, something starts moving through the house. Its next short film, “SentenZia”, is already in development.",
   },
 };
 
 
 /* --------------------------------------------------------------------------
+   EQUIPO (página Estudio)
+   Una persona por objeto, en el orden en que deben aparecer. Para añadir a
+   alguien, copia el bloque de una persona, pon una coma entre los dos y
+   cambia los datos:
+     nombre:    tal cual se escribe.
+     rol:       { es: "Dirección", en: "Director" }, o un texto si no hay traducción.
+     foto:      opcional, como "./img/equipo/nombre-apellido.jpg". Se
+                recorta en círculo y se pasa a blanco y negro. Vacía (""): se
+                muestra un círculo con las iniciales.
+     iniciales: opcional. Si no se ponen, salen de las dos primeras palabras
+                del nombre ("Daniel López" → "DL").
+   Si el array se queda vacío, la sección Equipo no se muestra.
+   -------------------------------------------------------------------------- */
+const EQUIPO = [
+  {
+    nombre: "Daniel López",
+    rol: { es: "Producción", en: "Producer" },
+    foto: "",
+  },
+];
+
+
+/* --------------------------------------------------------------------------
    CORTOS
 
-   ⚠️ LOS TRES CORTOS DE ABAJO SON CONTENIDO DE EJEMPLO INVENTADO: títulos,
-   sinopsis, equipo, festivales e imágenes. Hay que sustituirlos por los reales.
-   Mientras tengan "ejemplo: true", la web les pone una etiqueta visible
-   de "Ejemplo" para que nadie los confunda con cortos de verdad.
-
    CÓMO AÑADIR UN CORTO
-   1. Crea la carpeta img/slug-del-corto/ con sus imágenes.
-   2. Copia esta plantilla dentro del array SHORTS y rellénala:
+   1. Crea la carpeta img/slug-del-corto/ con el póster y los fotogramas.
+   2. Si vas a publicar el corto entero en la web, pon el vídeo en
+      video/slug-del-corto.mp4. Si solo hay tráiler en YouTube, no hace falta.
+   3. Copia esta plantilla dentro del array SHORTS y rellénala. Lo que todavía
+      no tengas, déjalo vacío ("" o []): no se muestra.
 
    {
      slug: "mi-corto",            // Identificador para la URL: minúsculas, sin espacios ni tildes
@@ -66,13 +89,20 @@ const ESTUDIO = {
      anio: 2027,                  // El de año más alto es el "Nuevo" y el que se destaca en el inicio
      duracion: "12 min",          // También vale "1 h 5 min". Los filtros leen los números de aquí
      sinopsis: { es: "De qué trata.", en: "What it's about." },
-     poster: "./img/mi-corto/poster.jpg",  // Vertical, proporción 2:3 (por ejemplo 800×1200)
-     trailerUrl: "https://www.youtube.com/watch?v=XXXXXXXXXXX",  // Vale cualquier enlace de YouTube. Vacío ("") si aún no hay
-     direccion: "Nombre Apellido",
-     guion: "Nombre Apellido",
-     reparto: ["Actriz Uno", "Actor Dos"],
-     fotogramas: ["./img/mi-corto/fotograma-1.jpg"],  // Puede estar vacío: []
-     festivales: ["Festival, ciudad y año"],          // Puede estar vacío: []
+     inspiracion: { es: "Inspirado en…", en: "Inspired by…" },  // Opcional: nota bajo la sinopsis
+     poster: "./img/mi-corto/poster.jpg",  // Vertical, proporción 2:3 (como 800×1200)
+
+     // Para verlo en la web, rellena uno de estos dos (si están los dos, se usa
+     // el vídeo; si no hay ninguno, el bloque de vídeo no aparece):
+     video: "./video/mi-corto.mp4",  // El corto completo, en la propia web (MP4 H.264)
+     trailerUrl: "",                 // Un enlace de YouTube, en cualquier formato
+
+     direccion: "",               // Nombres tal cual. Cada fila vacía de la ficha técnica no se muestra
+     guion: "",
+     produccion: "",
+     reparto: [],                 // Nombres entre comillas y separados por comas
+     fotogramas: ["./img/mi-corto/fotograma-1.jpg"],  // Horizontales. El primero es también la imagen del reproductor
+     festivales: [],              // Un texto por selección: "Festival, ciudad y año"
 
      // Opcional, para la página de prensa: versiones en alta resolución para
      // descargar. Si no las pones, se descargan las de la web.
@@ -85,85 +115,65 @@ const ESTUDIO = {
    -------------------------------------------------------------------------- */
 const SHORTS = [
   {
-    ejemplo: true,  // Borra esta línea en los cortos reales
-    slug: "dejame-subir",
-    titulo: { es: "Déjame subir", en: "Let Me Come Up" },
-    anio: 2026,
-    duracion: "11 min",
+    slug: "maleficio",
+    titulo: { es: "Maleficio", en: "Maleficio" },
+    anio: 2026, // POR CONFIRMAR: año de estreno de «Maleficio»
+    duracion: "2 min",
     sinopsis: {
-      es: "Una noche de lluvia suena el telefonillo en el piso de Inés. Es la voz de su madre, que le pide que abra. Pero su madre lleva tres días ingresada a cuarenta kilómetros de allí. Inés no pulsa el botón. La voz insiste con calma y, poco después, empieza a contar los pisos que le quedan por subir.",
-      en: "One rainy night, the intercom buzzes in Inés's flat. It's her mother's voice, asking her to open the door. But her mother has been in hospital for three days, forty kilometres away. Inés doesn't press the button. The voice insists, calmly, and soon starts counting the floors it still has to climb.",
+      es: "Una tarde cualquiera, un chico enciende la tele. En la pantalla aparece un símbolo que no debería estar ahí. Desde ese momento, algo empieza a moverse por la casa.",
+      en: "An ordinary afternoon, a boy turns on the TV. A symbol appears on the screen that shouldn't be there. From that moment on, something starts moving through the house.",
     },
-    poster: "./img/dejame-subir/poster.jpg",
-    // Vídeo de prueba para ver funcionar el reproductor: «Sintel», de la Blender Foundation (CC BY). Sustituir.
-    trailerUrl: "https://www.youtube.com/watch?v=eRsGyueVLvQ",
-    direccion: "Nombre Apellido",
-    guion: "Nombre Apellido",
-    reparto: ["Intérprete Uno", "Intérprete Dos"],
+    inspiracion: {
+      es: "Inspirado en la película Maleficio (Incantation, 2022)",
+      en: "Inspired by the film Incantation (2022)",
+    },
+    poster: "./img/maleficio/poster.jpg",
+    video: "./video/maleficio.mp4",
+    trailerUrl: "",
+    direccion: "",
+    guion: "",
+    produccion: "Daniel López",
+    reparto: [],
     fotogramas: [
-      "./img/dejame-subir/fotograma-1.jpg",
-      "./img/dejame-subir/fotograma-2.jpg",
-      "./img/dejame-subir/fotograma-3.jpg",
+      "./img/maleficio/fotograma-1.jpg",
+      "./img/maleficio/fotograma-2.jpg",
+      "./img/maleficio/fotograma-3.jpg",
     ],
     festivales: [],
   },
-  {
-    ejemplo: true,  // Borra esta línea en los cortos reales
-    slug: "repique",
-    titulo: { es: "Repique", en: "The Tolling" },
-    anio: 2025,
-    duracion: "17 min",
-    sinopsis: {
-      es: "Marta, técnica de sonido, viaja a un pantano para grabar el silencio sobre un pueblo que quedó bajo el agua en los años sesenta. En sus cintas aparece una campana que nadie más oye. Cada vez que repica, una casa del pueblo nuevo deja de contestar al teléfono.",
-      en: "Marta, a sound recordist, travels to a reservoir to record the silence above a village that was flooded in the sixties. A bell that no one else can hear turns up on her tapes. Every time it tolls, another house in the new village stops answering the phone.",
-    },
-    poster: "./img/repique/poster.jpg",
-    // Vídeo de prueba: «Sintel», de la Blender Foundation (CC BY). Sustituir.
-    trailerUrl: "https://www.youtube.com/watch?v=eRsGyueVLvQ",
-    direccion: "Nombre Apellido",
-    guion: "Nombre Apellido",
-    reparto: ["Intérprete Uno"],
-    fotogramas: [
-      "./img/repique/fotograma-1.jpg",
-      "./img/repique/fotograma-2.jpg",
-      "./img/repique/fotograma-3.jpg",
-    ],
-    festivales: [
-      {
-        es: "Festival de ejemplo de cine fantástico · Selección oficial",
-        en: "Example fantasy film festival · Official selection",
-      },
-      {
-        es: "Muestra de ejemplo de cortometrajes · Mención especial",
-        en: "Example short film showcase · Special mention",
-      },
-    ],
-  },
-  {
-    ejemplo: true,  // Borra esta línea en los cortos reales
-    slug: "lo-que-cruje",
-    titulo: { es: "Lo que cruje", en: "What Creaks" },
-    anio: 2024,
-    duracion: "14 min",
-    sinopsis: {
-      es: "Tras la muerte de su abuela, Álvaro pasa una última noche en la casa familiar antes de venderla. A las tres, la madera del pasillo empieza a crujir: un paso, otro, siempre en el mismo orden. Decide grabarlo. A la mañana siguiente, al escuchar la cinta, entiende el orden: los pasos no se acercan a su habitación. Salen de ella.",
-      en: "After his grandmother's death, Álvaro spends one last night in the family house before selling it. At three in the morning, the hallway floorboards begin to creak: one step, then another, always in the same order. He decides to record it. The next morning, listening to the tape, he understands the order: the footsteps aren't coming towards his room. They're leaving it.",
-    },
-    poster: "./img/lo-que-cruje/poster.jpg",
-    trailerUrl: "",  // Sin tráiler: la web muestra un aviso en su lugar
-    direccion: "Nombre Apellido",
-    guion: "Nombre Apellido",
-    reparto: ["Intérprete Uno", "Intérprete Dos", "Intérprete Tres"],
-    fotogramas: [
-      "./img/lo-que-cruje/fotograma-1.jpg",
-      "./img/lo-que-cruje/fotograma-2.jpg",
-      "./img/lo-que-cruje/fotograma-3.jpg",
-    ],
-    festivales: [
-      {
-        es: "Festival de ejemplo de cine de terror · Selección oficial",
-        en: "Example horror film festival · Official selection",
-      },
-    ],
-  },
 ];
+
+
+/* --------------------------------------------------------------------------
+   PRÓXIMO CORTO
+   Sale en la página Próximamente, en el aviso del inicio, al final del
+   listado de cortos (con su póster) y en la página de prensa.
+   Si titulo está vacío, no se muestra nada de él en ningún sitio.
+   -------------------------------------------------------------------------- */
+const PROXIMO = {
+  titulo: "SentenZia",
+  resaltar: "Z", // Opcional: letras del título que se pintan en rojo (distingue mayúsculas)
+  estado: { es: "En desarrollo", en: "In development" },
+  // Opcional: la frase que cierra el texto de Próximamente y del aviso del inicio
+  frase: {
+    es: "Algo está golpeando la puerta.",
+    en: "Something is pounding on the door.",
+  },
+  sinopsis: {
+    es: "Dani consigue cerrar la puerta justo a tiempo. Fuera, los golpes no paran. Dentro, la casa es lo único que le queda: tiene que encontrar comida y munición antes de que sea demasiado tarde. Aunque quizá ya lo sea.",
+    en: "Dani manages to shut the door just in time. Outside, the pounding won't stop. Inside, the house is all he has left: he must find food and ammo before it's too late. Though maybe it already is.",
+  },
+  // Opcional: fecha y hora del estreno para la cuenta atrás, con el formato
+  // "2027-10-31T21:00:00" (hora local de quien visita la web). Vacía: sin cuenta atrás
+  fecha: "",
+  // Opcional: el póster. Vertical y en proporción 4:5 (como 1122×1402); se
+  // muestra siempre entero, nunca recortado. Vacío: Próximamente enseña solo el
+  // texto, con el título en grande, y no aparece en el listado ni en prensa.
+  // Si lo cambias, cambia también el og:image de proximamente.html.
+  imagen: "./img/sentenzia/poster.jpg",
+  // Texto alternativo del póster: qué se ve en él, para quien no puede verlo
+  imagenAlt: {
+    es: "Póster de SentenZia: un brazo vendado y ensangrentado se apoya en el suelo junto al título en rojo",
+    en: "SentenZia poster: a bandaged, bloodied arm rests on the floor beside the title in red",
+  },
+};

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title data-i18n="inicio.tituloPagina">Dark Paradox Studios · Cortometrajes de terror</title>
-  <meta name="description" data-i18n-content="inicio.descripcion" content="Dark Paradox Studios es una productora independiente de cortometrajes de terror. Mira nuestros cortos y tráileres.">
+  <meta name="description" data-i18n-content="inicio.descripcion" content="Dark Paradox Studios es una productora independiente de cortometrajes de terror. Mira completo «Maleficio», nuestro primer corto.">
   <meta name="theme-color" content="#0a0a0b">
 
   <!-- Open Graph: lo que se ve al compartir el enlace. La imagen TIENE que ser una URL
@@ -13,7 +13,7 @@
   <meta property="og:site_name" content="Dark Paradox Studios">
   <meta property="og:locale" content="es_ES">
   <meta property="og:title" content="Dark Paradox Studios · Cortometrajes de terror">
-  <meta property="og:description" content="Productora independiente de cortometrajes de terror. Mira nuestros cortos y tráileres.">
+  <meta property="og:description" content="Productora independiente de cortometrajes de terror. Mira completo «Maleficio», nuestro primer corto.">
   <meta property="og:image" content="https://frxnker.github.io/DarkParadox/img/og-image.jpg">
 
   <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
@@ -90,8 +90,9 @@
           <span class="hero__estudio">Studios</span>
         </h1>
         <p class="hero__lema" data-i18n="inicio.lema">Cortometrajes de terror independientes.</p>
-        <!-- main.js apunta este botón al tráiler del corto más reciente -->
-        <a class="boton" id="hero-trailer" href="./cortos.html" data-i18n="inicio.verTrailer">Ver tráiler</a>
+        <!-- main.js convierte este botón en "Ver {título}" y lo apunta al vídeo del
+             corto más reciente de js/data.js (o a su tráiler, o a su ficha) -->
+        <a class="boton" id="hero-boton" href="./cortos.html" data-i18n="inicio.verCortos">Ver los cortos</a>
       </div>
     </section>
 
@@ -102,10 +103,24 @@
       </div>
     </section>
 
-    <section class="seccion aviso-proximo">
-      <div class="contenedor aparece">
-        <p data-i18n="inicio.gestando">Algo se está gestando.</p>
-        <a class="boton boton--secundario" href="./proximamente.html" data-i18n="inicio.verProximo">Ver lo próximo</a>
+    <!-- Aviso del próximo corto: main.js lo rellena con PROXIMO (js/data.js) y lo
+         muestra solo si tiene título. Cada dato vacío se queda oculto. La miniatura del
+         póster repite el enlace del botón, así que se salta con el teclado y el lector
+         de pantalla (tabindex="-1" y aria-hidden): para ellos ya está el botón. -->
+    <section class="seccion aviso-proximo" data-proximo-si-hay="titulo" hidden>
+      <div class="contenedor aviso-proximo__interior">
+        <a class="aviso-proximo__poster aparece" href="./proximamente.html" tabindex="-1" aria-hidden="true"
+           data-proximo-si-hay="imagen" hidden>
+          <img data-proximo="imagen" alt="" width="1122" height="1402" loading="lazy" hidden>
+        </a>
+        <div class="aviso-proximo__texto aparece">
+          <p class="ficha-texto">
+            <span data-i18n="menu.proximamente">Próximamente</span><span data-proximo-si-hay="estado" hidden> · <span data-proximo="estado" hidden></span></span>
+          </p>
+          <h2 class="aviso-proximo__titulo" data-proximo="titulo" hidden></h2>
+          <p class="aviso-proximo__frase" data-proximo="frase" hidden></p>
+          <a class="boton boton--secundario" href="./proximamente.html" data-i18n="inicio.verProximo">Ver lo próximo</a>
+        </div>
       </div>
     </section>
   </main>
