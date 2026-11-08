@@ -215,28 +215,41 @@ hasta que lo haya).
 ## Equipo: `EQUIPO`
 
 La sección **Equipo** de `estudio.html` sale del array `EQUIPO` de `js/data.js`. Cada persona es
-un objeto; para añadir a alguien, copia el bloque de una persona, pon una coma entre los dos y
-cambia los datos:
+un objeto; para añadir a alguien, pon su foto (si la hay) en `img/equipo/`, copia el bloque de una
+persona, pon una coma entre los dos y cambia los datos:
 
 ```js
 const EQUIPO = [
   {
     nombre: "Daniel López",
     rol: { es: "Producción", en: "Producer" },
-    foto: "",
+    foto: "./img/equipo/daniel-lopez.png",
+    instagram: "daniellpz_04_",
   },
   {
     nombre: "Nombre de la persona",
     rol: { es: "Dirección y guion", en: "Writer and director" },
-    foto: "./img/equipo/nombre-de-la-persona.jpg",
+    foto: "",        // Sin foto: sus iniciales en un círculo
+    instagram: "",   // Sin Instagram: no sale el enlace
   },
 ];
 ```
 
-- `foto` es opcional. Se recorta en círculo y se pasa a blanco y negro, así que puede estar en
-  color (cuadrada o vertical, unos 600 × 600 px). Sin foto, se muestra un círculo con las
-  iniciales, que salen de las dos primeras palabras del nombre («Daniel López» → «DL»). Si no son
-  las que quieres, añade `iniciales: "DL"`.
+- **`foto` es opcional.** Mejor cuadrada (unos 600 × 600 px) y con la cara en la mitad de arriba:
+  se recorta en círculo sin deformarse (`object-fit: cover`), centrada en la parte alta
+  (`object-position: 50% 30%`). Se ve en blanco y negro con algo de contraste y pasa a color
+  despacio al pasar el ratón por encima, al llegar con el teclado a su Instagram o, en el móvil,
+  al tocarla (otro toque la devuelve a blanco y negro). Sin transición si se pide reducir el
+  movimiento. El texto alternativo es su nombre. Comprímela antes de subirla: en la web se ve a
+  144 px, así que con 400 × 400 px en JPG basta (unos 40 KB).
+- Sin foto, se muestra un círculo con las iniciales, que salen de las dos primeras palabras del
+  nombre («Daniel López» → «DL»). Si no son las que quieres, añade `iniciales: "DL"`.
+- **`instagram` es opcional.** Solo el nombre de usuario, sin `@` ni enlace (si pegas `@usuario` o
+  el enlace entero, también vale). Sale bajo el rol como «@usuario», abre su perfil en otra
+  pestaña y el lector de pantalla lo anuncia como «Instagram de Daniel López».
+- **En la ficha técnica de los cortos**, el nombre de quien esté en `EQUIPO` con `instagram`
+  enlaza a su perfil (en `direccion`, `guion`, `produccion` y `reparto`). Para que lo encuentre,
+  escribe el nombre igual en los dos sitios; las mayúsculas y las tildes dan igual.
 - Salen en el orden del array. Si el array se queda vacío, la sección Equipo no se muestra.
 
 ---

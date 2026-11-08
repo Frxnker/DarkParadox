@@ -82,10 +82,51 @@ function idDeYoutube(url) {
   return coincidencia ? coincidencia[1] : null;
 }
 
-// El reparto puede venir como lista o como texto suelto: aceptamos los dos.
-// Los nombres vacíos se saltan.
-function textoReparto(reparto) {
-  return [].concat(reparto ?? []).map(enIdioma).filter(hayDato).join(", ");
+// Usuario de Instagram limpio a partir de lo que haya en data.js: vale
+// "usuario", "@usuario" o el enlace entero. Si no parece un usuario válido
+// (letras, números, puntos y guiones bajos), devuelve "" y no se enlaza nada.
+function usuarioDeInstagram(valor) {
+  const texto = String(valor ?? "").trim();
+  const deEnlace = texto.match(/instagram\.com\/([\w.]+)/i);
+  const usuario = deEnlace ? deEnlace[1] : texto.replace(/^@/, "");
+  return /^[\w.]{1,30}$/.test(usuario) ? usuario : "";
+}
+
+function urlDeInstagram(usuario) {
+  return `https://www.instagram.com/${usuario}/`;
+}
+
+// Enlace a un perfil de Instagram que se abre en otra pestaña. La etiqueta para
+// lectores de pantalla dice de quién es: "Instagram de Daniel López".
+function enlaceDeInstagram(usuario, nombre, clase, contenidoHTML) {
+  return `<a class="${clase}" href="${urlDeInstagram(usuario)}" target="_blank" rel="noopener noreferrer"
+            aria-label="${escaparHTML(t("equipo.instagramDe", { nombre }))}">${contenidoHTML}</a>`;
+}
+
+// Busca a alguien en EQUIPO (data.js) por su nombre, sin importar mayúsculas,
+// tildes ni espacios de más: "daniel  lopez" encuentra a "Daniel López"
+function personaDelEquipo(nombre) {
+  const clave = normalizar(String(nombre).trim().replace(/\s+/g, " "));
+  return LISTA_EQUIPO.find(
+    (persona) => persona && normalizar(String(persona.nombre ?? "").trim().replace(/\s+/g, " ")) === clave
+  );
+}
+
+// Nombres de la ficha técnica, ya en HTML. Pueden venir como un texto o como
+// una lista; los vacíos se saltan. Si una persona está en EQUIPO y tiene
+// Instagram, su nombre enlaza a su perfil.
+function htmlDePersonas(valor) {
+  return [].concat(valor ?? [])
+    .map(enIdioma)
+    .filter(hayDato)
+    .map((texto) => {
+      const nombre = String(texto).trim();
+      const usuario = usuarioDeInstagram(personaDelEquipo(nombre)?.instagram);
+      return usuario
+        ? enlaceDeInstagram(usuario, nombre, "enlace-en-linea", escaparHTML(nombre))
+        : escaparHTML(nombre);
+    })
+    .join(", ");
 }
 
 // Qué se puede ver de un corto en su ficha: el corto completo (video), el
@@ -1330,14 +1371,16 @@ function htmlDelVideo(corto) {
 }
 
 // Ficha técnica: solo las filas que tienen dato. Si no hay ninguna, no se muestra.
+// Los nombres de quien esté en EQUIPO con Instagram enlazan a su perfil.
 function htmlDeLaFicha(corto) {
+  const texto = (valor) => (hayDato(valor) ? escaparHTML(enIdioma(valor)) : "");
   const filas = [
-    filaFicha(t("corto.direccion"), enIdioma(corto.direccion)),
-    filaFicha(t("corto.guion"), enIdioma(corto.guion)),
-    filaFicha(t("corto.produccion"), enIdioma(corto.produccion)),
-    filaFicha(t("corto.reparto"), textoReparto(corto.reparto)),
-    filaFicha(t("corto.duracion"), enIdioma(corto.duracion)),
-    filaFicha(t("corto.anio"), corto.anio),
+    filaFicha(t("corto.direccion"), htmlDePersonas(corto.direccion)),
+    filaFicha(t("corto.guion"), htmlDePersonas(corto.guion)),
+    filaFicha(t("corto.produccion"), htmlDePersonas(corto.produccion)),
+    filaFicha(t("corto.reparto"), htmlDePersonas(corto.reparto)),
+    filaFicha(t("corto.duracion"), texto(corto.duracion)),
+    filaFicha(t("corto.anio"), texto(corto.anio)),
   ].join("");
 
   if (!filas) return "";
@@ -1350,13 +1393,15 @@ function htmlDeLaFicha(corto) {
   `;
 }
 
-function filaFicha(nombre, valor) {
-  if (!hayDato(valor)) return "";
+// Una fila de la ficha. El valor llega ya preparado como HTML (escapado y, si
+// toca, con enlaces); si está vacío, la fila no se pinta.
+function filaFicha(nombre, valorHTML) {
+  if (!valorHTML) return "";
 
   return `
     <div class="ficha-tecnica__fila">
       <dt>${nombre}</dt>
-      <dd>${escaparHTML(valor)}</dd>
+      <dd>${valorHTML}</dd>
     </div>
   `;
 }
@@ -1937,8 +1982,9 @@ function iniciarCuentaAtras() {
 
 /* --------------------------------------------------------------------------
    13. EQUIPO
-   En estudio.html, una ficha por cada persona de EQUIPO (data.js). Quien no
-   tiene foto aparece con sus iniciales dentro de un círculo.
+   En estudio.html, una ficha por cada persona de EQUIPO (data.js): su foto
+   (en blanco y negro hasta pasar el ratón o tocarla) o, si no tiene, sus
+   iniciales en un círculo; nombre, rol y, si lo tiene, su Instagram.
    -------------------------------------------------------------------------- */
 
 // Las iniciales salen de las dos primeras palabras del nombre: "Daniel López" → "DL"
@@ -1962,26 +2008,68 @@ function pintarEquipo() {
   lista.innerHTML = personas
     .map((persona) => {
       const nombre = String(persona.nombre).trim();
-      // Las iniciales son decorativas: el nombre ya está escrito debajo
+      // La foto lleva de alt solo el nombre. width y height reservan el hueco
+      // cuadrado mientras carga, para que no salte el diseño. Las iniciales son
+      // decorativas: el nombre ya está escrito debajo.
       const retrato = hayDato(persona.foto)
-        ? `<img class="equipo__retrato" src="${escaparHTML(persona.foto)}"
-                alt="${escaparHTML(t("estudio.retrato", { nombre }))}" width="600" height="600" loading="lazy">`
+        ? `<img class="equipo__retrato equipo__foto" src="${escaparHTML(persona.foto)}"
+                alt="${escaparHTML(nombre)}" width="600" height="600" loading="lazy">`
         : `<span class="equipo__retrato equipo__iniciales" aria-hidden="true">${escaparHTML(
             hayDato(persona.iniciales) ? persona.iniciales : inicialesDe(nombre)
           )}</span>`;
       const rol = hayDato(persona.rol)
         ? `<p class="equipo__rol"${langDe(persona.rol)}>${escaparHTML(enIdioma(persona.rol))}</p>`
         : "";
+      const usuario = usuarioDeInstagram(persona.instagram);
+      const instagram = usuario
+        ? enlaceDeInstagram(usuario, nombre, "equipo__instagram", `
+            <svg class="equipo__instagram-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.25" cy="6.75" r="0.75" fill="currentColor"/>
+            </svg>
+            <span>@${escaparHTML(usuario)}</span>`)
+        : "";
 
       return `
-        <li class="aparece">
+        <li class="equipo__persona aparece">
           ${retrato}
           <h3 class="equipo__nombre">${escaparHTML(nombre)}</h3>
           ${rol}
+          ${instagram}
         </li>
       `;
     })
     .join("");
+}
+
+// En una pantalla táctil no existe "pasar el ratón": un toque en la foto la pasa
+// a color, y otro toque (o tocar en cualquier otro sitio) la devuelve a blanco y
+// negro. Con ratón no hace falta: el CSS la pone en color con :hover.
+function iniciarFotosEquipo() {
+  const lista = document.getElementById("equipo");
+  if (!lista) return;
+
+  let ultimoPuntero = "";
+  const quitarColor = () => {
+    lista.querySelectorAll(".en-color").forEach((persona) => persona.classList.remove("en-color"));
+  };
+
+  lista.addEventListener("pointerdown", (evento) => {
+    ultimoPuntero = evento.pointerType;
+  });
+
+  document.addEventListener("click", (evento) => {
+    const foto = evento.target.closest?.(".equipo__foto");
+    if (!foto || ultimoPuntero === "mouse") {
+      if (!foto) quitarColor();
+      return;
+    }
+    const persona = foto.closest(".equipo__persona");
+    const yaEnColor = persona.classList.contains("en-color");
+    quitarColor();
+    persona.classList.toggle("en-color", !yaEnColor);
+  });
 }
 
 
@@ -2117,6 +2205,7 @@ ejecutar([
   iniciarFiltros,
   pintarDetalle,
   pintarEquipo,
+  iniciarFotosEquipo,
   pintarPrensa,
   iniciarPosterProximo,
   iniciarCuentaAtras,

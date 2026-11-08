@@ -1551,6 +1551,21 @@ html:not(.js) .menu__lista a {
   margin: 0;
 }
 
+/* Enlace dentro de un texto: un nombre de la ficha técnica que lleva a su
+   Instagram (si esa persona está en EQUIPO) */
+.enlace-en-linea {
+  text-decoration: underline;
+  text-decoration-color: var(--gris);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color var(--suave);
+}
+
+.enlace-en-linea:hover {
+  text-decoration-color: var(--sangre);
+  text-decoration-thickness: 2px;
+}
+
 /* Galería de fotogramas: el primero, grande */
 .galeria {
   display: grid;
@@ -1963,7 +1978,7 @@ html:not(.js) .menu__lista a {
   font-size: 1.125rem;
 }
 
-/* Equipo (EQUIPO, en data.js): retrato redondo, nombre y rol */
+/* Equipo (EQUIPO, en data.js): retrato redondo, nombre, rol e Instagram */
 .equipo {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1971,17 +1986,44 @@ html:not(.js) .menu__lista a {
   margin-top: 1.75rem;
 }
 
+/* El círculo, igual para la foto y para las iniciales */
 .equipo__retrato {
   display: grid;
   place-items: center;
   width: min(100%, 9rem);
+  height: auto;
   aspect-ratio: 1;
   margin-bottom: 0.9rem;
   border-radius: 50%;
-  object-fit: cover;
   background: var(--negro-suave);
-  /* Blanco y negro también para las fotos reales, aunque estén en color */
-  filter: grayscale(1) contrast(1.05);
+}
+
+/* Foto: recortada en círculo sin deformarse (cover) y centrada en la parte
+   alta, donde suele estar la cara. En blanco y negro con algo más de
+   contraste; pasa a color, despacio, al pasar el ratón por la ficha, al
+   llegar con el teclado a su Instagram o al tocarla (clase en-color, que
+   pone main.js). Un fino anillo rojo la separa del fondo, como a las iniciales. */
+.equipo__foto {
+  object-fit: cover;
+  object-position: 50% 30%;
+  box-shadow:
+    0 0 0 1px var(--linea),
+    0 0 0 4px var(--negro),
+    0 0 0 5px rgba(139, 0, 0, 0.7);
+  filter: grayscale(1) contrast(1.1);
+  cursor: default;
+  transition: filter 700ms ease;
+}
+
+@media (hover: hover) {
+  .equipo__persona:hover .equipo__foto {
+    filter: none;
+  }
+}
+
+.equipo__persona:focus-within .equipo__foto,
+.equipo__persona.en-color .equipo__foto {
+  filter: none;
 }
 
 /* Sin foto: las iniciales dentro de un círculo con un fino anillo rojo,
@@ -1997,7 +2039,6 @@ html:not(.js) .menu__lista a {
   font-size: 2.75rem;
   line-height: 1;
   letter-spacing: 0.04em;
-  filter: none;
   user-select: none;
 }
 
@@ -2011,6 +2052,39 @@ html:not(.js) .menu__lista a {
   color: var(--gris);
   font-size: 0.9375rem;
   line-height: 1.35;
+}
+
+/* Enlace "@usuario" a su Instagram, bajo el rol. Mide 44 px de alto para el dedo. */
+.equipo__instagram {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 100%;
+  min-height: var(--tactil);
+  color: var(--blanco-roto);
+  font-family: var(--fuente-ficha);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-decoration-color: var(--gris);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color var(--suave);
+}
+
+.equipo__instagram span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.equipo__instagram:hover {
+  text-decoration-color: var(--sangre);
+  text-decoration-thickness: 2px;
+}
+
+.equipo__instagram-icono {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 @media (min-width: 48rem) {

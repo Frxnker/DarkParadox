@@ -139,7 +139,7 @@ const TRADUCCIONES = {
     "estudio.quienesTexto": "Dark Paradox Studios es una productora independiente de cortometrajes de terror.",
     "estudio.cortosTexto": "Nuestro primer corto es «Maleficio». El segundo, «SentenZia», ya está en camino.",
     "estudio.equipo": "Equipo",
-    "estudio.retrato": "Retrato en blanco y negro de {nombre}",
+    "equipo.instagramDe": "Instagram de {nombre}",
 
     // Contacto
     "contacto.tituloPagina": "Contacto · Dark Paradox Studios",
@@ -319,7 +319,7 @@ const TRADUCCIONES = {
     "estudio.quienesTexto": "Dark Paradox Studios is an independent production company making horror short films.",
     "estudio.cortosTexto": "Our first short film is “Maleficio”. The second, “SentenZia”, is on its way.",
     "estudio.equipo": "Team",
-    "estudio.retrato": "Black and white portrait of {nombre}",
+    "equipo.instagramDe": "{nombre} on Instagram",
 
     // Contact
     "contacto.tituloPagina": "Contact · Dark Paradox Studios",

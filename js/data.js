@@ -52,23 +52,44 @@ const ESTUDIO = {
 
 /* --------------------------------------------------------------------------
    EQUIPO (página Estudio)
-   Una persona por objeto, en el orden en que deben aparecer. Para añadir a
-   alguien, copia el bloque de una persona, pon una coma entre los dos y
-   cambia los datos:
-     nombre:    tal cual se escribe.
-     rol:       { es: "Dirección", en: "Director" }, o un texto si no hay traducción.
-     foto:      opcional, como "./img/equipo/nombre-apellido.jpg". Se
-                recorta en círculo y se pasa a blanco y negro. Vacía (""): se
-                muestra un círculo con las iniciales.
-     iniciales: opcional. Si no se ponen, salen de las dos primeras palabras
-                del nombre ("Daniel López" → "DL").
+   Una persona por objeto, en el orden en que deben aparecer.
+
+   CÓMO AÑADIR A ALGUIEN
+   1. Si tiene foto, ponla en img/equipo/ con un nombre en minúsculas, sin
+      espacios ni tildes (como nombre-apellido.jpg).
+   2. Copia esta plantilla dentro del array EQUIPO, después de la última
+      persona (con una coma entre las dos), y rellénala:
+
+   {
+     nombre: "Nombre Completo",                  // Tal cual se escribe
+     rol: { es: "Dirección", en: "Director" },   // O un texto si no hay traducción
+     foto: "./img/equipo/nombre-apellido.jpg",   // Opcional. Vacía (""): sus iniciales en un círculo
+     instagram: "usuario",                       // Opcional. Solo el usuario: sin @ ni enlace
+   },
+
+   foto (opcional): mejor cuadrada (como 600×600) y con la cara en la mitad de
+     arriba. Se recorta en círculo, centrada en la parte alta, y se ve en blanco
+     y negro; pasa a color al pasar el ratón por encima o al tocarla. Sin foto
+     se muestra un círculo con las iniciales, que salen de las dos primeras
+     palabras del nombre ("Daniel López" → "DL"); si no son las que quieres,
+     añade iniciales: "DL".
+   instagram (opcional): solo el nombre de usuario, como "daniellpz_04_" (si
+     pegas "@daniellpz_04_" o el enlace entero, también vale). Sale bajo el rol
+     como un enlace a su perfil. Vacío (""): sin enlace.
+
+   Si alguien del equipo aparece en la ficha técnica de un corto (direccion,
+   guion, produccion o reparto) y tiene instagram, su nombre enlaza a su
+   perfil. Para eso, escribe el nombre igual en los dos sitios (las
+   mayúsculas y las tildes dan igual).
+
    Si el array se queda vacío, la sección Equipo no se muestra.
    -------------------------------------------------------------------------- */
 const EQUIPO = [
   {
     nombre: "Daniel López",
     rol: { es: "Producción", en: "Producer" },
-    foto: "",
+    foto: "./img/equipo/daniel-lopez.png",
+    instagram: "daniellpz_04_",
   },
 ];
 
@@ -97,9 +118,9 @@ const EQUIPO = [
      video: "./video/mi-corto.mp4",  // El corto completo, en la propia web (MP4 H.264)
      trailerUrl: "",                 // Un enlace de YouTube, en cualquier formato
 
-     direccion: "",               // Nombres tal cual. Cada fila vacía de la ficha técnica no se muestra
+     direccion: "",               // Un nombre, o varios en lista: ["Uno", "Otro"]. Fila vacía: no se muestra
      guion: "",
-     produccion: "",
+     produccion: "",              // Quien esté en EQUIPO con instagram sale enlazado a su perfil
      reparto: [],                 // Nombres entre comillas y separados por comas
      fotogramas: ["./img/mi-corto/fotograma-1.jpg"],  // Horizontales. El primero es también la imagen del reproductor
      festivales: [],              // Un texto por selección: "Festival, ciudad y año"
