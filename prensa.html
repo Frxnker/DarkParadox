@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="prensa.tituloPagina">Prensa · Dark Paradox Studios</title>
+  <meta name="description" data-i18n-content="prensa.descripcion" content="Press kit de Dark Paradox Studios: descripción del estudio, logotipos, pósters, fotogramas y contacto de prensa.">
+  <meta name="theme-color" content="#0a0a0b">
+
+  <!-- Open Graph: la imagen TIENE que ser una URL completa: si cambias de usuario o de repositorio, actualízala. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Dark Paradox Studios">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="Prensa · Dark Paradox Studios">
+  <meta property="og:description" content="Press kit de Dark Paradox Studios: descripción del estudio, logotipos, pósters, fotogramas y contacto de prensa.">
+  <meta property="og:image" content="https://frxnker.github.io/DarkParadox/img/og-image.jpg">
+
+  <link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&amp;family=Source+Sans+3:wght@400;600&amp;family=Special+Elite&amp;display=swap">
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <script>document.documentElement.classList.add("js");</script>
+  <script src="./js/data.js" defer></script>
+  <script src="./js/i18n.js" defer></script>
+  <script src="./js/main.js" defer></script>
+</head>
+<body>
+  <a class="saltar" href="#contenido" data-i18n="comun.saltar">Saltar al contenido</a>
+
+  <header class="cabecera">
+    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio" data-i18n-aria-label="comun.marca">
+      <img class="marca__icono" src="./img/logo.svg" alt="" width="30" height="30" loading="lazy">
+      <span class="marca__texto glitch" data-texto="Dark Paradox">Dark Paradox</span>
+    </a>
+
+    <!-- Herramientas de la cabecera. Sin JavaScript no funcionarían, así que llevan
+         el atributo hidden y main.js las muestra solo si el navegador las admite -->
+    <div class="cabecera__herramientas">
+      <!-- Selector de idioma. main.js marca el actual con aria-pressed y traduce la página -->
+      <div class="idioma" role="group" aria-label="Idioma" data-i18n-aria-label="idioma.grupo" hidden>
+        <button class="idioma__boton" type="button" data-idioma="es" lang="es" aria-label="Español" aria-pressed="true">ES</button>
+        <button class="idioma__boton" type="button" data-idioma="en" lang="en" aria-label="English" aria-pressed="false">EN</button>
+      </div>
+
+      <!-- Sonido ambiente: apagado por defecto. main.js lo genera con la Web Audio API -->
+      <button class="sonido-boton" type="button" aria-pressed="false" aria-label="Sonido ambiente" title="Sonido ambiente" data-i18n-aria-label="sonido.nombre" data-i18n-title="sonido.nombre" hidden>
+        <svg class="sonido-boton__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3.5 9.5h3.5l4.5-4v13l-4.5-4H3.5z"/>
+          <path class="sonido-boton__ondas" d="M15 9.2a4 4 0 0 1 0 5.6M17.8 6.5a8 8 0 0 1 0 11"/>
+          <path class="sonido-boton__mudo" d="m15.5 9.5 5 5m0-5-5 5"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú" data-i18n-aria-label="menu.abrir">
+      <span class="menu-boton__barras" aria-hidden="true"></span>
+    </button>
+
+    <nav class="menu" id="menu-principal" aria-label="Principal" data-i18n-aria-label="menu.nombre">
+      <ul class="menu__lista">
+        <li><a href="./index.html" data-i18n="menu.inicio">Inicio</a></li>
+        <li><a href="./cortos.html" data-i18n="menu.cortos">Cortos</a></li>
+        <li><a href="./proximamente.html" data-i18n="menu.proximamente">Próximamente</a></li>
+        <li><a href="./estudio.html" data-i18n="menu.estudio">Estudio</a></li>
+        <li><a href="./prensa.html" aria-current="page" data-i18n="menu.prensa">Prensa</a></li>
+        <li><a href="./contacto.html" data-i18n="menu.contacto">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+    <div class="contenedor">
+      <div class="cabecera-pagina">
+        <h1 data-i18n="prensa.titulo">Prensa</h1>
+        <p class="texto-ancho texto-secundario" data-i18n="prensa.intro">
+          Textos, logotipos e imágenes para escribir sobre Dark Paradox Studios y sus cortos.
+        </p>
+      </div>
+
+      <!-- Descripción corta y larga, en español y en inglés. Se rellenan desde
+           ESTUDIO, en js/data.js -->
+      <section class="prensa__bloque" aria-labelledby="prensa-sobre">
+        <h2 id="prensa-sobre" data-i18n="prensa.sobre">Sobre el estudio</h2>
+        <div id="prensa-descripciones">
+          <noscript><p>Para ver las descripciones necesitas activar JavaScript.</p></noscript>
+        </div>
+      </section>
+
+      <!-- Fundación (ESTUDIO), ciudad (CONTACTO) y número de cortos y festivales
+           (se cuentan solos a partir de SHORTS) -->
+      <section class="prensa__bloque" aria-labelledby="prensa-datos-titulo">
+        <h2 id="prensa-datos-titulo" data-i18n="prensa.datos">Datos clave</h2>
+        <div id="prensa-datos"></div>
+      </section>
+
+      <!-- Logotipos. Los archivos están en img/prensa/. Para usar otro logo, sustitúyelos
+           manteniendo los mismos nombres. -->
+      <section class="prensa__bloque" aria-labelledby="prensa-logo">
+        <h2 id="prensa-logo" data-i18n="prensa.logo">Logotipo</h2>
+        <p class="texto-secundario" data-i18n="prensa.logoTexto">
+          SVG: vectorial, se ve nítido a cualquier tamaño. PNG: 1024 × 1024 px con fondo transparente.
+        </p>
+        <ul class="logos">
+          <li class="logo-descarga">
+            <div class="logo-descarga__muestra">
+              <img src="./img/prensa/logo-claro.svg" alt="" width="96" height="96" loading="lazy">
+            </div>
+            <div class="logo-descarga__info">
+              <h3 id="logo-claro" data-i18n="prensa.logoClaro">Versión clara</h3>
+              <p class="texto-secundario" data-i18n="prensa.paraOscuros">Para fondos oscuros</p>
+              <div class="logo-descarga__botones">
+                <a class="boton boton--secundario boton--pequeno" href="./img/prensa/logo-claro.svg"
+                   download="dark-paradox-logo-claro.svg" aria-describedby="logo-claro" data-i18n="prensa.descargarSvg">Descargar SVG</a>
+                <a class="boton boton--secundario boton--pequeno" href="./img/prensa/logo-claro.png"
+                   download="dark-paradox-logo-claro.png" aria-describedby="logo-claro" data-i18n="prensa.descargarPng">Descargar PNG</a>
+              </div>
+            </div>
+          </li>
+          <li class="logo-descarga">
+            <div class="logo-descarga__muestra logo-descarga__muestra--clara">
+              <img src="./img/prensa/logo-oscuro.svg" alt="" width="96" height="96" loading="lazy">
+            </div>
+            <div class="logo-descarga__info">
+              <h3 id="logo-oscuro" data-i18n="prensa.logoOscuro">Versión oscura</h3>
+              <p class="texto-secundario" data-i18n="prensa.paraClaros">Para fondos claros</p>
+              <div class="logo-descarga__botones">
+                <a class="boton boton--secundario boton--pequeno" href="./img/prensa/logo-oscuro.svg"
+                   download="dark-paradox-logo-oscuro.svg" aria-describedby="logo-oscuro" data-i18n="prensa.descargarSvg">Descargar SVG</a>
+                <a class="boton boton--secundario boton--pequeno" href="./img/prensa/logo-oscuro.png"
+                   download="dark-paradox-logo-oscuro.png" aria-describedby="logo-oscuro" data-i18n="prensa.descargarPng">Descargar PNG</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Pósters y fotogramas de cada corto, sacados de SHORTS (js/data.js) -->
+      <section class="prensa__bloque" aria-labelledby="prensa-imagenes">
+        <h2 id="prensa-imagenes" data-i18n="prensa.imagenes">Pósters y fotogramas</h2>
+        <p class="texto-secundario" data-i18n="prensa.imagenesTexto">Toca o haz clic en una imagen para descargarla.</p>
+        <div id="prensa-galeria">
+          <noscript><p>Para ver las imágenes necesitas activar JavaScript.</p></noscript>
+        </div>
+      </section>
+
+      <!-- Contacto de prensa: usa emailPrensa de CONTACTO (js/data.js) o, si está
+           vacío, el email general -->
+      <section class="prensa__bloque" aria-labelledby="prensa-contacto">
+        <h2 id="prensa-contacto" data-i18n="prensa.contacto">Contacto de prensa</h2>
+        <p class="texto-secundario" data-i18n="prensa.contactoTexto">
+          Para entrevistas, acreditaciones o material en otra resolución.
+        </p>
+        <ul class="canales prensa__canales">
+          <li>
+            <a class="canal" data-contacto="prensa" hidden>
+              <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14"/>
+                <path d="m3 6 9 7 9-7"/>
+              </svg>
+              <span>
+                <span class="canal__tipo">Email</span>
+                <span class="canal__valor" data-valor-prensa></span>
+              </span>
+            </a>
+            <div class="canal canal--pendiente" data-pendiente="prensa" hidden>
+              <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14"/>
+                <path d="m3 6 9 7 9-7"/>
+              </svg>
+              <span>
+                <span class="canal__tipo">Email</span>
+                <span class="canal__valor" data-i18n="contacto.emailPendiente">[email pendiente]</span>
+              </span>
+            </div>
+          </li>
+
+          <li>
+            <a class="canal" data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>
+              <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M4 20.5 5.3 16A8.5 8.5 0 1 1 8.4 19z"/>
+              </svg>
+              <span>
+                <span class="canal__tipo">WhatsApp</span>
+                <span class="canal__valor" data-i18n="contacto.abrirConversacion">Abrir conversación</span>
+              </span>
+            </a>
+          </li>
+
+          <li>
+            <a class="canal" href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">
+              <svg class="canal__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.25" cy="6.75" r="0.75" fill="currentColor"/>
+              </svg>
+              <span>
+                <span class="canal__tipo">Instagram</span>
+                <span class="canal__valor">@darkparadox_studios_</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie__interior">
+      <p class="pie__marca">Dark Paradox Studios</p>
+      <nav class="pie__redes" aria-label="Redes, contacto y prensa" data-i18n-aria-label="pie.redes">
+        <a href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a data-contacto="email" hidden>Email</a>
+        <a data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>WhatsApp</a>
+        <a href="./prensa.html" data-i18n="menu.prensa">Prensa</a>
+      </nav>
+      <p data-ciudad hidden></p>
+      <p>© <span data-anio>2026</span> Dark Paradox Studios</p>
+    </div>
+  </footer>
+</body>
+</html>

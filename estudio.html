@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Estudio · Dark Paradox Studios</title>
-  <meta name="description" content="Quiénes somos, por qué hacemos terror y qué equipo hay detrás de Dark Paradox Studios.">
+  <title data-i18n="estudio.tituloPagina">Estudio · Dark Paradox Studios</title>
+  <meta name="description" data-i18n-content="estudio.descripcion" content="Quiénes somos, por qué hacemos terror y qué equipo hay detrás de Dark Paradox Studios.">
   <meta name="theme-color" content="#0a0a0b">
 
   <!-- Open Graph: la imagen TIENE que ser una URL completa: si cambias de usuario o de repositorio, actualízala. -->
@@ -26,28 +26,49 @@
 
   <script>document.documentElement.classList.add("js");</script>
   <script src="./js/data.js" defer></script>
+  <script src="./js/i18n.js" defer></script>
   <script src="./js/main.js" defer></script>
 </head>
 <body>
-  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <a class="saltar" href="#contenido" data-i18n="comun.saltar">Saltar al contenido</a>
 
   <header class="cabecera">
-    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio">
+    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio" data-i18n-aria-label="comun.marca">
       <img class="marca__icono" src="./img/logo.svg" alt="" width="30" height="30" loading="lazy">
       <span class="marca__texto glitch" data-texto="Dark Paradox">Dark Paradox</span>
     </a>
 
-    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+    <!-- Herramientas de la cabecera. Sin JavaScript no funcionarían, así que llevan
+         el atributo hidden y main.js las muestra solo si el navegador las admite -->
+    <div class="cabecera__herramientas">
+      <!-- Selector de idioma. main.js marca el actual con aria-pressed y traduce la página -->
+      <div class="idioma" role="group" aria-label="Idioma" data-i18n-aria-label="idioma.grupo" hidden>
+        <button class="idioma__boton" type="button" data-idioma="es" lang="es" aria-label="Español" aria-pressed="true">ES</button>
+        <button class="idioma__boton" type="button" data-idioma="en" lang="en" aria-label="English" aria-pressed="false">EN</button>
+      </div>
+
+      <!-- Sonido ambiente: apagado por defecto. main.js lo genera con la Web Audio API -->
+      <button class="sonido-boton" type="button" aria-pressed="false" aria-label="Sonido ambiente" title="Sonido ambiente" data-i18n-aria-label="sonido.nombre" data-i18n-title="sonido.nombre" hidden>
+        <svg class="sonido-boton__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3.5 9.5h3.5l4.5-4v13l-4.5-4H3.5z"/>
+          <path class="sonido-boton__ondas" d="M15 9.2a4 4 0 0 1 0 5.6M17.8 6.5a8 8 0 0 1 0 11"/>
+          <path class="sonido-boton__mudo" d="m15.5 9.5 5 5m0-5-5 5"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú" data-i18n-aria-label="menu.abrir">
       <span class="menu-boton__barras" aria-hidden="true"></span>
     </button>
 
-    <nav class="menu" id="menu-principal" aria-label="Principal">
+    <nav class="menu" id="menu-principal" aria-label="Principal" data-i18n-aria-label="menu.nombre">
       <ul class="menu__lista">
-        <li><a href="./index.html">Inicio</a></li>
-        <li><a href="./cortos.html">Cortos</a></li>
-        <li><a href="./proximamente.html">Próximamente</a></li>
-        <li><a href="./estudio.html" aria-current="page">Estudio</a></li>
-        <li><a href="./contacto.html">Contacto</a></li>
+        <li><a href="./index.html" data-i18n="menu.inicio">Inicio</a></li>
+        <li><a href="./cortos.html" data-i18n="menu.cortos">Cortos</a></li>
+        <li><a href="./proximamente.html" data-i18n="menu.proximamente">Próximamente</a></li>
+        <li><a href="./estudio.html" aria-current="page" data-i18n="menu.estudio">Estudio</a></li>
+        <li><a href="./prensa.html" data-i18n="menu.prensa">Prensa</a></li>
+        <li><a href="./contacto.html" data-i18n="menu.contacto">Contacto</a></li>
       </ul>
     </nav>
   </header>
@@ -55,27 +76,27 @@
   <main id="contenido" tabindex="-1">
     <section class="contenedor manifiesto">
       <div class="cabecera-pagina">
-        <h1>Estudio</h1>
+        <h1 data-i18n="estudio.titulo">Estudio</h1>
       </div>
 
       <div class="texto-ancho">
-        <h2 class="aparece">Quiénes somos</h2>
-        <p class="aparece">
+        <h2 class="aparece" data-i18n="estudio.quienes">Quiénes somos</h2>
+        <p class="aparece" data-i18n="estudio.quienesTexto">
           Dark Paradox Studios es una productora independiente de cortometrajes de terror.
           Trabajamos con equipos pequeños, pocas luces y mucho tiempo mirando el mismo rincón,
           hasta que parece que algo se mueve.
         </p>
 
-        <h2 class="aparece manifiesto__subtitulo">Por qué hacemos terror</h2>
-        <p class="aparece">
+        <h2 class="aparece manifiesto__subtitulo" data-i18n="estudio.porque">Por qué hacemos terror</h2>
+        <p class="aparece" data-i18n="estudio.porqueTexto">
           Porque un corto no tiene tiempo de explicarlo todo, y lo que no se explica es
           lo que te sigue hasta casa.
         </p>
-        <blockquote class="manifiesto__cita aparece">
+        <blockquote class="manifiesto__cita aparece" data-i18n="estudio.cita">
           No nos interesan los sustos. Nos interesa la duda pequeña que llega después,
           cuando apagas la luz del pasillo.
         </blockquote>
-        <p class="aparece">
+        <p class="aparece" data-i18n="estudio.cierre">
           El miedo es de las pocas cosas que todavía compartimos a oscuras con desconocidos.
           Por eso seguimos haciéndolo.
         </p>
@@ -83,31 +104,35 @@
     </section>
 
     <section class="seccion contenedor">
-      <h2 class="aparece">Equipo</h2>
+      <h2 class="aparece" data-i18n="estudio.equipo">Equipo</h2>
       <!-- ⚠️ CONTENIDO DE EJEMPLO: pon los nombres, los roles y las fotos reales. La hoja de
            estilos pasa las fotos a blanco y negro, así que pueden estar en color. -->
-      <p class="aparece"><span class="etiqueta-ejemplo">Contenido de ejemplo</span></p>
+      <p class="aparece"><span class="etiqueta-ejemplo" data-i18n="comun.contenidoEjemplo">Contenido de ejemplo</span></p>
 
       <ul class="equipo">
         <li class="aparece">
-          <img class="equipo__foto" src="./img/equipo/persona-1.jpg" alt="Retrato en blanco y negro de Nombre Apellido" width="600" height="750" loading="lazy">
+          <img class="equipo__foto" src="./img/equipo/persona-1.jpg" alt="Retrato en blanco y negro de Nombre Apellido"
+               data-i18n-alt="estudio.retrato" data-nombre="Nombre Apellido" width="600" height="750" loading="lazy">
           <h3 class="equipo__nombre">Nombre Apellido</h3>
-          <p class="equipo__rol">Dirección y guion</p>
+          <p class="equipo__rol" data-i18n="estudio.rolDireccion">Dirección y guion</p>
         </li>
         <li class="aparece">
-          <img class="equipo__foto" src="./img/equipo/persona-2.jpg" alt="Retrato en blanco y negro de Nombre Apellido" width="600" height="750" loading="lazy">
+          <img class="equipo__foto" src="./img/equipo/persona-2.jpg" alt="Retrato en blanco y negro de Nombre Apellido"
+               data-i18n-alt="estudio.retrato" data-nombre="Nombre Apellido" width="600" height="750" loading="lazy">
           <h3 class="equipo__nombre">Nombre Apellido</h3>
-          <p class="equipo__rol">Producción</p>
+          <p class="equipo__rol" data-i18n="estudio.rolProduccion">Producción</p>
         </li>
         <li class="aparece">
-          <img class="equipo__foto" src="./img/equipo/persona-3.jpg" alt="Retrato en blanco y negro de Nombre Apellido" width="600" height="750" loading="lazy">
+          <img class="equipo__foto" src="./img/equipo/persona-3.jpg" alt="Retrato en blanco y negro de Nombre Apellido"
+               data-i18n-alt="estudio.retrato" data-nombre="Nombre Apellido" width="600" height="750" loading="lazy">
           <h3 class="equipo__nombre">Nombre Apellido</h3>
-          <p class="equipo__rol">Dirección de fotografía</p>
+          <p class="equipo__rol" data-i18n="estudio.rolFotografia">Dirección de fotografía</p>
         </li>
         <li class="aparece">
-          <img class="equipo__foto" src="./img/equipo/persona-4.jpg" alt="Retrato en blanco y negro de Nombre Apellido" width="600" height="750" loading="lazy">
+          <img class="equipo__foto" src="./img/equipo/persona-4.jpg" alt="Retrato en blanco y negro de Nombre Apellido"
+               data-i18n-alt="estudio.retrato" data-nombre="Nombre Apellido" width="600" height="750" loading="lazy">
           <h3 class="equipo__nombre">Nombre Apellido</h3>
-          <p class="equipo__rol">Sonido y montaje</p>
+          <p class="equipo__rol" data-i18n="estudio.rolSonido">Sonido y montaje</p>
         </li>
       </ul>
     </section>
@@ -116,10 +141,11 @@
   <footer class="pie">
     <div class="contenedor pie__interior">
       <p class="pie__marca">Dark Paradox Studios</p>
-      <nav class="pie__redes" aria-label="Redes y contacto">
+      <nav class="pie__redes" aria-label="Redes, contacto y prensa" data-i18n-aria-label="pie.redes">
         <a href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">Instagram</a>
         <a data-contacto="email" hidden>Email</a>
         <a data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>WhatsApp</a>
+        <a href="./prensa.html" data-i18n="menu.prensa">Prensa</a>
       </nav>
       <p data-ciudad hidden></p>
       <p>© <span data-anio>2026</span> Dark Paradox Studios</p>

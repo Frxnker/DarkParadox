@@ -19,8 +19,8 @@
   </script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Página no encontrada · Dark Paradox Studios</title>
-  <meta name="description" content="Esta página no existe. O no debería.">
+  <title data-i18n="error.tituloPagina">Página no encontrada · Dark Paradox Studios</title>
+  <meta name="description" data-i18n-content="error.descripcion" content="Esta página no existe. O no debería.">
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#0a0a0b">
 
@@ -43,28 +43,49 @@
 
   <script>document.documentElement.classList.add("js");</script>
   <script src="./js/data.js" defer></script>
+  <script src="./js/i18n.js" defer></script>
   <script src="./js/main.js" defer></script>
 </head>
 <body>
-  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <a class="saltar" href="#contenido" data-i18n="comun.saltar">Saltar al contenido</a>
 
   <header class="cabecera">
-    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio">
+    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio" data-i18n-aria-label="comun.marca">
       <img class="marca__icono" src="./img/logo.svg" alt="" width="30" height="30" loading="lazy">
       <span class="marca__texto glitch" data-texto="Dark Paradox">Dark Paradox</span>
     </a>
 
-    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+    <!-- Herramientas de la cabecera. Sin JavaScript no funcionarían, así que llevan
+         el atributo hidden y main.js las muestra solo si el navegador las admite -->
+    <div class="cabecera__herramientas">
+      <!-- Selector de idioma. main.js marca el actual con aria-pressed y traduce la página -->
+      <div class="idioma" role="group" aria-label="Idioma" data-i18n-aria-label="idioma.grupo" hidden>
+        <button class="idioma__boton" type="button" data-idioma="es" lang="es" aria-label="Español" aria-pressed="true">ES</button>
+        <button class="idioma__boton" type="button" data-idioma="en" lang="en" aria-label="English" aria-pressed="false">EN</button>
+      </div>
+
+      <!-- Sonido ambiente: apagado por defecto. main.js lo genera con la Web Audio API -->
+      <button class="sonido-boton" type="button" aria-pressed="false" aria-label="Sonido ambiente" title="Sonido ambiente" data-i18n-aria-label="sonido.nombre" data-i18n-title="sonido.nombre" hidden>
+        <svg class="sonido-boton__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3.5 9.5h3.5l4.5-4v13l-4.5-4H3.5z"/>
+          <path class="sonido-boton__ondas" d="M15 9.2a4 4 0 0 1 0 5.6M17.8 6.5a8 8 0 0 1 0 11"/>
+          <path class="sonido-boton__mudo" d="m15.5 9.5 5 5m0-5-5 5"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú" data-i18n-aria-label="menu.abrir">
       <span class="menu-boton__barras" aria-hidden="true"></span>
     </button>
 
-    <nav class="menu" id="menu-principal" aria-label="Principal">
+    <nav class="menu" id="menu-principal" aria-label="Principal" data-i18n-aria-label="menu.nombre">
       <ul class="menu__lista">
-        <li><a href="./index.html">Inicio</a></li>
-        <li><a href="./cortos.html">Cortos</a></li>
-        <li><a href="./proximamente.html">Próximamente</a></li>
-        <li><a href="./estudio.html">Estudio</a></li>
-        <li><a href="./contacto.html">Contacto</a></li>
+        <li><a href="./index.html" data-i18n="menu.inicio">Inicio</a></li>
+        <li><a href="./cortos.html" data-i18n="menu.cortos">Cortos</a></li>
+        <li><a href="./proximamente.html" data-i18n="menu.proximamente">Próximamente</a></li>
+        <li><a href="./estudio.html" data-i18n="menu.estudio">Estudio</a></li>
+        <li><a href="./prensa.html" data-i18n="menu.prensa">Prensa</a></li>
+        <li><a href="./contacto.html" data-i18n="menu.contacto">Contacto</a></li>
       </ul>
     </nav>
   </header>
@@ -72,14 +93,14 @@
   <main id="contenido" tabindex="-1">
     <div class="mensaje-tematico contenedor">
       <p class="ficha-texto">Error 404</p>
-      <h1>Esta página no debería existir.</h1>
-      <p class="texto-ancho texto-secundario">
+      <h1 data-i18n="error.titulo">Esta página no debería existir.</h1>
+      <p class="texto-ancho texto-secundario" data-i18n="error.texto">
         Has llegado a un pasillo que no aparece en los planos. Aquí no hay nada.
         Si oyes algo, no contestes.
       </p>
       <div class="mensaje-tematico__acciones">
-        <a class="boton" href="./index.html">Volver al inicio</a>
-        <a class="boton boton--secundario" href="./cortos.html">Ver los cortos</a>
+        <a class="boton" href="./index.html" data-i18n="error.volver">Volver al inicio</a>
+        <a class="boton boton--secundario" href="./cortos.html" data-i18n="error.cortos">Ver los cortos</a>
       </div>
     </div>
   </main>
@@ -87,10 +108,11 @@
   <footer class="pie">
     <div class="contenedor pie__interior">
       <p class="pie__marca">Dark Paradox Studios</p>
-      <nav class="pie__redes" aria-label="Redes y contacto">
+      <nav class="pie__redes" aria-label="Redes, contacto y prensa" data-i18n-aria-label="pie.redes">
         <a href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">Instagram</a>
         <a data-contacto="email" hidden>Email</a>
         <a data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>WhatsApp</a>
+        <a href="./prensa.html" data-i18n="menu.prensa">Prensa</a>
       </nav>
       <p data-ciudad hidden></p>
       <p>© <span data-anio>2026</span> Dark Paradox Studios</p>

@@ -20,7 +20,8 @@
    13. Estudio
    14. Contacto
    15. Página 404 y mensajes temáticos
-   16. Movimiento reducido
+   16. Prensa
+   17. Movimiento reducido
    ========================================================================== */
 
 
@@ -208,6 +209,45 @@ a {
   letter-spacing: 0.04em;
 }
 
+/* Marca el corto más reciente. Texto blanco roto sobre el rojo: contraste de 8:1 */
+.etiqueta-nuevo {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: var(--sangre);
+  color: var(--blanco-roto);
+  font-family: var(--fuente-ficha);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Aviso breve abajo de la pantalla ("Enlace copiado"). main.js lo crea y lo muestra. */
+.aviso-flotante {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  z-index: 300;
+  width: max-content;
+  max-width: calc(100% - 2 * var(--margen));
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--linea);
+  border-left: 3px solid var(--sangre);
+  background: var(--negro-suave);
+  color: var(--blanco-roto);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+  opacity: 0;
+  transform: translate(-50%, 0.5rem);
+  pointer-events: none;
+  transition: opacity var(--suave), transform var(--suave);
+}
+
+.aviso-flotante.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 /* Oculto a la vista, pero accesible para los lectores de pantalla */
 .oculto-visual {
   position: absolute;
@@ -314,6 +354,72 @@ body.saliendo {
   opacity: 0;
 }
 
+/* Intro de cine: main.js la crea la primera vez que se entra en la web en cada
+   sesión. Queda por debajo del grano y del viñeteado, que así también se ven
+   sobre ella. Calendario: el logo parpadea entre 0,25 y 1,55 s, se queda quieto
+   y la capa negra se funde entre 2,1 y 2,8 s. En total, menos de 3 segundos. */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 8990;
+  display: grid;
+  place-items: center;
+  padding: var(--margen);
+  background: #000;
+  text-align: center;
+  cursor: pointer;
+  animation: intro-salida 700ms ease-in 2.1s forwards;
+}
+
+/* Halo de luz del proyector sobre la pantalla, que parpadea a la vez que el logo */
+.intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, rgba(236, 232, 225, 0.09), transparent 50%);
+  opacity: 0;
+  animation: proyector 1.3s linear 250ms forwards;
+}
+
+.intro__contenido {
+  position: relative;
+  opacity: 0;
+  animation:
+    proyector 1.3s linear 250ms forwards,
+    enfoque 1.3s ease-out 250ms backwards,
+    vaiven 480ms steps(1) infinite;
+}
+
+.intro__logo {
+  width: 6.5rem;
+  height: 6.5rem;
+  margin: 0 auto 1.25rem;
+}
+
+.intro__marca {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: clamp(2.5rem, 12vw, 4rem);
+  line-height: 1;
+}
+
+.intro__marca span {
+  display: block;
+  margin-top: 0.8rem;
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  text-transform: uppercase;
+}
+
+/* Al tocar la pantalla o pulsar una tecla, la intro se funde enseguida */
+.intro.intro--saltando {
+  pointer-events: none;
+  animation: intro-salto 300ms ease forwards;
+}
+
 /* Aparición al hacer scroll. Solo se oculta si hay JavaScript (clase .js en <html>);
    así, sin JavaScript, todo el contenido sigue siendo visible. */
 .js .aparece {
@@ -363,6 +469,39 @@ body.saliendo {
   96%   { opacity: 0; }
 }
 
+/* Parpadeo de proyector: solo dos bajadas de luz en 1,3 segundos, por debajo del
+   límite de tres destellos por segundo de las pautas de accesibilidad */
+@keyframes proyector {
+  0%        { opacity: 0; }
+  12%       { opacity: 0.7; }
+  22%       { opacity: 0.15; }
+  40%       { opacity: 0.9; }
+  52%       { opacity: 0.45; }
+  70%, 100% { opacity: 1; }
+}
+
+/* El logo llega desenfocado, como cuando el proyeccionista ajusta la lente */
+@keyframes enfoque {
+  from { filter: blur(6px); scale: 1.04; }
+  to   { filter: none; scale: 1; }
+}
+
+/* Pequeño temblor de la película al pasar por el proyector */
+@keyframes vaiven {
+  0%   { translate: 0 0; }
+  25%  { translate: 0 -1px; }
+  50%  { translate: 1px 1px; }
+  75%  { translate: 0 1px; }
+}
+
+@keyframes intro-salida {
+  to { opacity: 0; visibility: hidden; }
+}
+
+@keyframes intro-salto {
+  to { opacity: 0; visibility: hidden; }
+}
+
 
 /* 5. CABECERA Y MENÚ
    -------------------------------------------------------------------------- */
@@ -403,6 +542,97 @@ body.saliendo {
 .marca__texto.glitch::before,
 .marca__texto.glitch::after {
   animation-duration: 13s;
+}
+
+/* Pantallas más estrechas que el diseño base (375 px): la marca se encoge para
+   que quepan el idioma, el sonido y el menú. Por debajo de 352 px solo queda el
+   logo (el enlace sigue teniendo su aria-label). */
+@media (max-width: 23.375rem) {
+  .marca {
+    gap: 0.45rem;
+    font-size: 1.0625rem;
+  }
+}
+
+@media (max-width: 22rem) {
+  .marca__texto {
+    display: none;
+  }
+}
+
+/* Botones pequeños de la derecha (idioma y sonido). margin-left: auto los empuja
+   hacia el botón del menú. Van por encima del menú desplegado, como la marca. */
+.cabecera__herramientas {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+/* Botón del altavoz: 44 × 44 px. El icono cambia según aria-pressed */
+.sonido-boton {
+  display: grid;
+  place-items: center;
+  width: var(--tactil);
+  height: var(--tactil);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gris);
+  cursor: pointer;
+  transition: color var(--suave);
+}
+
+.sonido-boton[aria-pressed="true"],
+.sonido-boton:hover {
+  color: var(--blanco-roto);
+}
+
+.sonido-boton__icono {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Apagado: altavoz con una X. Encendido: altavoz con ondas. */
+.sonido-boton[aria-pressed="false"] .sonido-boton__ondas,
+.sonido-boton[aria-pressed="true"] .sonido-boton__mudo {
+  display: none;
+}
+
+/* Selector ES / EN. El idioma actual va subrayado en rojo, como la página
+   actual del menú. */
+.idioma {
+  display: flex;
+}
+
+.idioma__boton {
+  display: grid;
+  place-items: center;
+  width: var(--tactil);
+  height: var(--tactil);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.35em;
+  cursor: pointer;
+  transition: color var(--suave);
+}
+
+.idioma__boton:hover,
+.idioma__boton[aria-pressed="true"] {
+  color: var(--blanco-roto);
+}
+
+.idioma__boton[aria-pressed="true"] {
+  text-decoration-line: underline;
+  text-decoration-color: var(--sangre);
 }
 
 /* Botón hamburguesa: 48 × 48 px */
@@ -465,13 +695,15 @@ body.saliendo {
 }
 
 /* Menú a pantalla completa en el móvil. visibility: hidden impide llegar a los
-   enlaces con el tabulador mientras está cerrado. */
+   enlaces con el tabulador mientras está cerrado. Si no cabe en vertical (un
+   móvil girado), se puede desplazar; margin-block: auto lo centra cuando sí cabe. */
 .menu {
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   padding: var(--alto-cabecera) var(--margen);
+  overflow-y: auto;
   background: var(--negro);
   opacity: 0;
   visibility: hidden;
@@ -487,6 +719,7 @@ body.saliendo {
   display: grid;
   gap: 0.5rem;
   width: 100%;
+  margin-block: auto;
 }
 
 .menu__lista a {
@@ -542,19 +775,28 @@ html:not(.js) .menu__lista a {
   min-height: var(--tactil);
 }
 
-/* Escritorio: menú en línea, sin hamburguesa */
+/* Desde tablet, márgenes laterales más amplios */
 @media (min-width: 48rem) {
   :root {
     --margen: 2.5rem;
   }
+}
 
+/* Escritorio: menú en línea, sin hamburguesa. Con seis enlaces, el idioma y el
+   sonido, la cabecera no cabe en una línea hasta los 1024 px (64rem). Esta medida
+   tiene que coincidir con la de iniciarMenu, en main.js. */
+@media (min-width: 64rem) {
   .menu-boton {
     display: none;
   }
 
+  /* Una línea fina separa el idioma y el sonido de los enlaces */
   .menu {
     position: static;
-    padding: 0;
+    margin-left: 1.25rem;
+    padding: 0 0 0 1.25rem;
+    overflow: visible;
+    border-left: 1px solid var(--linea);
     background: none;
     opacity: 1;
     visibility: visible;
@@ -600,6 +842,13 @@ html:not(.js) .menu__lista a {
 .boton--secundario {
   border-color: var(--gris);
   background: transparent;
+}
+
+/* Versión compacta, para grupos de botones (compartir, copiar…). Sigue midiendo 44 px. */
+.boton--pequeno {
+  min-height: var(--tactil);
+  padding: 0.4rem 1rem;
+  font-size: 0.9375rem;
 }
 
 @media (hover: hover) {
@@ -687,6 +936,12 @@ html:not(.js) .menu__lista a {
 /* 8. INICIO
    -------------------------------------------------------------------------- */
 .hero {
+  /* Posición y tamaño de la luz del efecto linterna. main.js cambia --luz-x y
+     --luz-y con el ratón o el dedo. */
+  --luz-x: 50%;
+  --luz-y: 40%;
+  --radio-luz: clamp(9rem, 34vmin, 17rem);
+
   position: relative;
   isolation: isolate; /* Mantiene los z-index negativos dentro de esta sección */
   display: flex;
@@ -720,6 +975,25 @@ html:not(.js) .menu__lista a {
     rgba(10, 10, 11, 0.1) 68%,
     rgba(10, 10, 11, 0.5) 100%
   );
+}
+
+/* Efecto linterna (main.js añade la clase .hero--linterna). Una capa casi negra
+   tapa la imagen salvo un círculo alrededor de la luz. Está por debajo del
+   degradado anterior (los dos tienen z-index: -1, pero ::after va después), así
+   que el título y el botón se leen igual de bien que sin el efecto. */
+.hero--linterna::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    circle var(--radio-luz) at var(--luz-x) var(--luz-y),
+    rgba(4, 4, 5, 0) 0%,
+    rgba(4, 4, 5, 0.3) 45%,
+    rgba(4, 4, 5, 0.78) 75%,
+    rgba(4, 4, 5, 0.94) 100%
+  );
+  pointer-events: none;
 }
 
 .hero__contenido {
@@ -761,8 +1035,15 @@ html:not(.js) .menu__lista a {
 }
 
 .destacado__poster-enlace {
+  position: relative;
   display: block;
   max-width: 22rem;
+}
+
+.destacado__poster-enlace .etiqueta-nuevo {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
 }
 
 .destacado__poster {
@@ -823,6 +1104,85 @@ html:not(.js) .menu__lista a {
 @media (hover: none) {
   .pista-tactil {
     display: block;
+  }
+}
+
+/* Buscador y filtros. En el móvil: buscador arriba, año y duración en dos
+   columnas y el orden debajo. En escritorio, todo en una fila. */
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.filtros__campo--buscar,
+.filtros__campo--orden {
+  grid-column: 1 / -1;
+}
+
+.filtros label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+}
+
+.filtros input,
+.filtros select {
+  display: block;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.6rem 0.875rem;
+  border: 1px solid var(--gris);
+  border-radius: 0;
+  background-color: var(--negro-suave);
+  color: var(--blanco-roto);
+  font: inherit;
+  font-size: 1rem; /* Con menos de 16 px, iOS amplía la página al escribir */
+}
+
+/* Flecha propia para los desplegables, igual en todos los navegadores */
+.filtros select {
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1.5 5 5 5-5' fill='none' stroke='%23a8a29a' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-position: right 0.875rem center;
+  background-repeat: no-repeat;
+  background-size: 0.75rem;
+  appearance: none;
+  cursor: pointer;
+}
+
+.filtros input::placeholder {
+  color: var(--gris);
+  opacity: 1;
+}
+
+.filtros__resultado {
+  margin: 0 0 1.25rem;
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+}
+
+.filtros__resultado:empty {
+  display: none;
+}
+
+.sin-resultados {
+  max-width: var(--ancho-texto);
+  padding-block: 1.5rem clamp(3.5rem, 12vw, 7rem);
+}
+
+@media (min-width: 48rem) {
+  .filtros {
+    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+  }
+
+  .filtros__campo--buscar,
+  .filtros__campo--orden {
+    grid-column: auto;
   }
 }
 
@@ -922,6 +1282,12 @@ html:not(.js) .menu__lista a {
   left: 0.75rem;
 }
 
+.tarjeta .etiqueta-nuevo {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
 
 /* 10. DETALLE DE CORTO
    -------------------------------------------------------------------------- */
@@ -953,6 +1319,99 @@ html:not(.js) .menu__lista a {
 
 .corto__aviso-ejemplo {
   margin-bottom: 1rem;
+}
+
+/* Botones para compartir el corto */
+.compartir {
+  margin-top: 1.5rem;
+}
+
+.compartir__botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.compartir .ficha-texto {
+  margin-bottom: 0.5rem;
+}
+
+.compartir__icono {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Navegación "← Anterior / Siguiente →" al final de la ficha */
+.corto-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: clamp(2.5rem, 8vw, 4.5rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--linea);
+}
+
+.corto-nav__enlace {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.375rem;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: border-color var(--suave);
+}
+
+/* El siguiente siempre va en la columna derecha, aunque no haya anterior */
+.corto-nav__enlace--siguiente {
+  grid-column: 2;
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.corto-nav__poster {
+  flex: none;
+  width: 2.75rem;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: var(--negro-suave);
+}
+
+/* nowrap: la flecha nunca se separa de su palabra */
+.corto-nav__direccion {
+  display: block;
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.corto-nav__titulo {
+  display: block;
+  font-family: var(--fuente-titulos);
+  font-size: 1.25rem;
+  line-height: 1.15;
+}
+
+@media (hover: hover) {
+  .corto-nav__enlace:hover {
+    border-color: var(--linea);
+  }
+
+  .corto-nav__enlace:hover .corto-nav__titulo {
+    text-decoration: underline;
+    text-decoration-color: var(--sangre);
+    text-decoration-thickness: 2px;
+  }
+}
+
+@media (min-width: 48rem) {
+  .corto-nav__poster {
+    width: 4.5rem;
+  }
+
+  .corto-nav__titulo {
+    font-size: 1.5rem;
+  }
 }
 
 .corto__bloque {
@@ -1417,7 +1876,202 @@ a.canal:hover {
 }
 
 
-/* 16. MOVIMIENTO REDUCIDO
+/* 16. PRENSA
+   -------------------------------------------------------------------------- */
+.prensa__bloque {
+  padding-bottom: clamp(3rem, 10vw, 5.5rem);
+}
+
+.prensa__ejemplo {
+  margin-bottom: 1.25rem;
+}
+
+/* Descripciones del estudio: cada una en español y en inglés, con su botón de copiar */
+.descripcion {
+  margin-bottom: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--linea);
+  background: var(--negro-suave);
+}
+
+.descripcion__versiones {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.descripcion__version .ficha-texto {
+  margin-bottom: 0.4rem;
+}
+
+/* Datos clave: el número grande arriba y su nombre debajo. En el HTML va primero
+   el nombre (dt) y después el dato (dd), que es como lo lee un lector de pantalla;
+   column-reverse solo cambia el orden visual. */
+.datos-clave {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px; /* El fondo gris que asoma entre las celdas hace de línea */
+  margin: 0;
+  border: 1px solid var(--linea);
+  background: var(--linea);
+}
+
+.datos-clave__dato {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  padding: 1.25rem 1rem;
+  background: var(--negro);
+}
+
+.datos-clave dt {
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+}
+
+.datos-clave dd {
+  margin: 0 0 0.25rem;
+  font-family: var(--fuente-titulos);
+  font-size: clamp(2rem, 8vw, 2.75rem);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.datos-clave dd.datos-clave__pendiente {
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+/* Logotipos: muestra sobre su fondo y botones de descarga */
+.logos {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.logo-descarga {
+  border: 1px solid var(--linea);
+}
+
+.logo-descarga__muestra {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  background: var(--negro);
+}
+
+.logo-descarga__muestra--clara {
+  background: var(--blanco-roto);
+}
+
+.logo-descarga__muestra img {
+  width: 6rem;
+  height: 6rem;
+}
+
+.logo-descarga__info {
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--linea);
+}
+
+.logo-descarga__info h3 {
+  margin-bottom: 0.2rem;
+}
+
+.logo-descarga__botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Galería para descargar: una "hoja de contactos" por corto. Todas las
+   miniaturas tienen la misma altura y el ancho que les da su proporción. */
+.prensa-corto {
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--linea);
+}
+
+.prensa-corto__titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+}
+
+.prensa-corto__anio {
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.9375rem;
+}
+
+.prensa-galeria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 0.75rem;
+}
+
+.prensa-galeria__enlace {
+  display: block;
+  text-decoration: none;
+}
+
+.prensa-galeria__enlace img {
+  width: auto;
+  height: 7.5rem;
+  background: var(--negro-suave);
+  transition: opacity var(--suave);
+}
+
+.prensa-galeria__pie {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--gris);
+  font-family: var(--fuente-ficha);
+  font-size: 0.875rem;
+}
+
+@media (hover: hover) {
+  .prensa-galeria__enlace:hover img {
+    opacity: 0.7;
+  }
+
+  .prensa-galeria__enlace:hover .prensa-galeria__pie {
+    color: var(--blanco-roto);
+  }
+}
+
+.prensa__canales {
+  max-width: 32rem;
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 48rem) {
+  .descripcion {
+    padding: 1.5rem 1.75rem;
+  }
+
+  .descripcion__versiones {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem;
+  }
+
+  .datos-clave {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .logos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .prensa-galeria__enlace img {
+    height: 10rem;
+  }
+}
+
+
+/* 17. MOVIMIENTO REDUCIDO
    Para quien lo ha pedido en su sistema: sin grano animado, parpadeos, glitch
    ni fundidos. Todo el contenido aparece directamente.
    -------------------------------------------------------------------------- */
@@ -1437,6 +2091,12 @@ a.canal:hover {
   }
 
   .parpadeo {
+    display: none;
+  }
+
+  /* main.js ya no crea la intro ni activa la linterna, pero así queda asegurado */
+  .intro,
+  .hero--linterna::before {
     display: none;
   }
 

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Próximamente · Dark Paradox Studios</title>
-  <meta name="description" content="El próximo cortometraje de terror de Dark Paradox Studios, ahora en desarrollo.">
+  <title data-i18n="proximamente.tituloPagina">Próximamente · Dark Paradox Studios</title>
+  <meta name="description" data-i18n-content="proximamente.descripcion" content="El próximo cortometraje de terror de Dark Paradox Studios, ahora en desarrollo.">
   <meta name="theme-color" content="#0a0a0b">
 
   <!-- Open Graph: la imagen TIENE que ser una URL completa: si cambias de usuario o de repositorio, actualízala. -->
@@ -26,28 +26,49 @@
 
   <script>document.documentElement.classList.add("js");</script>
   <script src="./js/data.js" defer></script>
+  <script src="./js/i18n.js" defer></script>
   <script src="./js/main.js" defer></script>
 </head>
 <body class="pagina-hero">
-  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <a class="saltar" href="#contenido" data-i18n="comun.saltar">Saltar al contenido</a>
 
   <header class="cabecera">
-    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio">
+    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio" data-i18n-aria-label="comun.marca">
       <img class="marca__icono" src="./img/logo.svg" alt="" width="30" height="30" loading="lazy">
       <span class="marca__texto glitch" data-texto="Dark Paradox">Dark Paradox</span>
     </a>
 
-    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+    <!-- Herramientas de la cabecera. Sin JavaScript no funcionarían, así que llevan
+         el atributo hidden y main.js las muestra solo si el navegador las admite -->
+    <div class="cabecera__herramientas">
+      <!-- Selector de idioma. main.js marca el actual con aria-pressed y traduce la página -->
+      <div class="idioma" role="group" aria-label="Idioma" data-i18n-aria-label="idioma.grupo" hidden>
+        <button class="idioma__boton" type="button" data-idioma="es" lang="es" aria-label="Español" aria-pressed="true">ES</button>
+        <button class="idioma__boton" type="button" data-idioma="en" lang="en" aria-label="English" aria-pressed="false">EN</button>
+      </div>
+
+      <!-- Sonido ambiente: apagado por defecto. main.js lo genera con la Web Audio API -->
+      <button class="sonido-boton" type="button" aria-pressed="false" aria-label="Sonido ambiente" title="Sonido ambiente" data-i18n-aria-label="sonido.nombre" data-i18n-title="sonido.nombre" hidden>
+        <svg class="sonido-boton__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3.5 9.5h3.5l4.5-4v13l-4.5-4H3.5z"/>
+          <path class="sonido-boton__ondas" d="M15 9.2a4 4 0 0 1 0 5.6M17.8 6.5a8 8 0 0 1 0 11"/>
+          <path class="sonido-boton__mudo" d="m15.5 9.5 5 5m0-5-5 5"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú" data-i18n-aria-label="menu.abrir">
       <span class="menu-boton__barras" aria-hidden="true"></span>
     </button>
 
-    <nav class="menu" id="menu-principal" aria-label="Principal">
+    <nav class="menu" id="menu-principal" aria-label="Principal" data-i18n-aria-label="menu.nombre">
       <ul class="menu__lista">
-        <li><a href="./index.html">Inicio</a></li>
-        <li><a href="./cortos.html">Cortos</a></li>
-        <li><a href="./proximamente.html" aria-current="page">Próximamente</a></li>
-        <li><a href="./estudio.html">Estudio</a></li>
-        <li><a href="./contacto.html">Contacto</a></li>
+        <li><a href="./index.html" data-i18n="menu.inicio">Inicio</a></li>
+        <li><a href="./cortos.html" data-i18n="menu.cortos">Cortos</a></li>
+        <li><a href="./proximamente.html" aria-current="page" data-i18n="menu.proximamente">Próximamente</a></li>
+        <li><a href="./estudio.html" data-i18n="menu.estudio">Estudio</a></li>
+        <li><a href="./prensa.html" data-i18n="menu.prensa">Prensa</a></li>
+        <li><a href="./contacto.html" data-i18n="menu.contacto">Contacto</a></li>
       </ul>
     </nav>
   </header>
@@ -56,50 +77,51 @@
     <!-- ⚠️ CONTENIDO DE EJEMPLO: sustituye el texto, la imagen y la fecha por los del corto real -->
     <section class="teaser">
       <img class="teaser__fondo" src="./img/proximamente/teaser.jpg" width="1400" height="1400" loading="lazy"
-           alt="Una vieja fotografía familiar en la que, al fondo, se distingue una figura alta e inmóvil.">
+           alt="Una vieja fotografía familiar en la que, al fondo, se distingue una figura alta e inmóvil."
+           data-i18n-alt="proximamente.imagen">
 
       <div class="contenedor">
-        <p class="ficha-texto">En desarrollo · <span class="etiqueta-ejemplo">Ejemplo</span></p>
+        <p class="ficha-texto"><span data-i18n="proximamente.enDesarrollo">En desarrollo</span> · <span class="etiqueta-ejemplo" data-i18n="comun.ejemplo">Ejemplo</span></p>
         <!-- main.js muestra estas líneas una a una -->
-        <p class="teaser__linea">Está en todas las fotos de la familia.</p>
-        <p class="teaser__linea">Nadie recuerda quién es.</p>
-        <p class="teaser__linea">En la de 1987 apenas se le distingue.</p>
-        <p class="teaser__linea">En la de este verano está justo detrás de ti.</p>
-        <h1 class="teaser__linea teaser__titulo">El hombre del fondo</h1>
+        <p class="teaser__linea" data-i18n="proximamente.linea1">Está en todas las fotos de la familia.</p>
+        <p class="teaser__linea" data-i18n="proximamente.linea2">Nadie recuerda quién es.</p>
+        <p class="teaser__linea" data-i18n="proximamente.linea3">En la de 1987 apenas se le distingue.</p>
+        <p class="teaser__linea" data-i18n="proximamente.linea4">En la de este verano está justo detrás de ti.</p>
+        <h1 class="teaser__linea teaser__titulo" data-i18n="proximamente.tituloCorto">El hombre del fondo</h1>
       </div>
     </section>
 
     <section class="seccion seccion--corta">
       <div class="contenedor">
-        <h2 class="aparece">Faltan</h2>
+        <h2 class="aparece" data-i18n="proximamente.faltan">Faltan</h2>
 
         <!-- Cuenta atrás opcional. Cambia la fecha en data-fecha (año-mes-díaThora:minutos:segundos)
              o borra este bloque entero si todavía no hay fecha. -->
         <div class="cuenta-atras aparece" id="cuenta-atras" data-fecha="2027-10-31T21:00:00"
-             role="timer" aria-label="Tiempo que falta para el estreno">
+             role="timer" aria-label="Tiempo que falta para el estreno" data-i18n-aria-label="proximamente.tiempo">
           <div class="cuenta-atras__celda">
             <span class="cuenta-atras__numero" data-unidad="dias">--</span>
-            <span class="cuenta-atras__unidad">días</span>
+            <span class="cuenta-atras__unidad" data-i18n="proximamente.dias">días</span>
           </div>
           <div class="cuenta-atras__celda">
             <span class="cuenta-atras__numero" data-unidad="horas">--</span>
-            <span class="cuenta-atras__unidad">horas</span>
+            <span class="cuenta-atras__unidad" data-i18n="proximamente.horas">horas</span>
           </div>
           <div class="cuenta-atras__celda">
             <span class="cuenta-atras__numero" data-unidad="minutos">--</span>
-            <span class="cuenta-atras__unidad">min</span>
+            <span class="cuenta-atras__unidad" data-i18n="proximamente.minutos">min</span>
           </div>
           <div class="cuenta-atras__celda">
             <span class="cuenta-atras__numero" data-unidad="segundos">--</span>
-            <span class="cuenta-atras__unidad">seg</span>
+            <span class="cuenta-atras__unidad" data-i18n="proximamente.segundos">seg</span>
           </div>
         </div>
 
-        <p class="texto-ancho texto-secundario aparece">
+        <p class="texto-ancho texto-secundario aparece" data-i18n="proximamente.texto">
           Contaremos más cuando estemos seguros de que podemos contarlo.
           Mientras tanto, el rodaje se sigue desde Instagram.
         </p>
-        <a class="boton aparece" href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">Seguir en Instagram</a>
+        <a class="boton aparece" href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer" data-i18n="proximamente.instagram">Seguir en Instagram</a>
       </div>
     </section>
   </main>
@@ -107,10 +129,11 @@
   <footer class="pie">
     <div class="contenedor pie__interior">
       <p class="pie__marca">Dark Paradox Studios</p>
-      <nav class="pie__redes" aria-label="Redes y contacto">
+      <nav class="pie__redes" aria-label="Redes, contacto y prensa" data-i18n-aria-label="pie.redes">
         <a href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">Instagram</a>
         <a data-contacto="email" hidden>Email</a>
         <a data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>WhatsApp</a>
+        <a href="./prensa.html" data-i18n="menu.prensa">Prensa</a>
       </nav>
       <p data-ciudad hidden></p>
       <p>© <span data-anio>2026</span> Dark Paradox Studios</p>

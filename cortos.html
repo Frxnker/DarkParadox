@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cortos · Dark Paradox Studios</title>
-  <meta name="description" content="Todos los cortometrajes de terror de Dark Paradox Studios: pósters, sinopsis y tráileres.">
+  <title data-i18n="cortos.tituloPagina">Cortos · Dark Paradox Studios</title>
+  <meta name="description" data-i18n-content="cortos.descripcion" content="Todos los cortometrajes de terror de Dark Paradox Studios: pósters, sinopsis y tráileres.">
   <meta name="theme-color" content="#0a0a0b">
 
   <!-- Open Graph: la imagen TIENE que ser una URL completa: si cambias de usuario o de repositorio, actualízala. -->
@@ -26,28 +26,49 @@
 
   <script>document.documentElement.classList.add("js");</script>
   <script src="./js/data.js" defer></script>
+  <script src="./js/i18n.js" defer></script>
   <script src="./js/main.js" defer></script>
 </head>
 <body>
-  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <a class="saltar" href="#contenido" data-i18n="comun.saltar">Saltar al contenido</a>
 
   <header class="cabecera">
-    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio">
+    <a class="marca" href="./index.html" aria-label="Dark Paradox Studios, ir al inicio" data-i18n-aria-label="comun.marca">
       <img class="marca__icono" src="./img/logo.svg" alt="" width="30" height="30" loading="lazy">
       <span class="marca__texto glitch" data-texto="Dark Paradox">Dark Paradox</span>
     </a>
 
-    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+    <!-- Herramientas de la cabecera. Sin JavaScript no funcionarían, así que llevan
+         el atributo hidden y main.js las muestra solo si el navegador las admite -->
+    <div class="cabecera__herramientas">
+      <!-- Selector de idioma. main.js marca el actual con aria-pressed y traduce la página -->
+      <div class="idioma" role="group" aria-label="Idioma" data-i18n-aria-label="idioma.grupo" hidden>
+        <button class="idioma__boton" type="button" data-idioma="es" lang="es" aria-label="Español" aria-pressed="true">ES</button>
+        <button class="idioma__boton" type="button" data-idioma="en" lang="en" aria-label="English" aria-pressed="false">EN</button>
+      </div>
+
+      <!-- Sonido ambiente: apagado por defecto. main.js lo genera con la Web Audio API -->
+      <button class="sonido-boton" type="button" aria-pressed="false" aria-label="Sonido ambiente" title="Sonido ambiente" data-i18n-aria-label="sonido.nombre" data-i18n-title="sonido.nombre" hidden>
+        <svg class="sonido-boton__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3.5 9.5h3.5l4.5-4v13l-4.5-4H3.5z"/>
+          <path class="sonido-boton__ondas" d="M15 9.2a4 4 0 0 1 0 5.6M17.8 6.5a8 8 0 0 1 0 11"/>
+          <path class="sonido-boton__mudo" d="m15.5 9.5 5 5m0-5-5 5"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú" data-i18n-aria-label="menu.abrir">
       <span class="menu-boton__barras" aria-hidden="true"></span>
     </button>
 
-    <nav class="menu" id="menu-principal" aria-label="Principal">
+    <nav class="menu" id="menu-principal" aria-label="Principal" data-i18n-aria-label="menu.nombre">
       <ul class="menu__lista">
-        <li><a href="./index.html">Inicio</a></li>
-        <li><a href="./cortos.html" aria-current="page">Cortos</a></li>
-        <li><a href="./proximamente.html">Próximamente</a></li>
-        <li><a href="./estudio.html">Estudio</a></li>
-        <li><a href="./contacto.html">Contacto</a></li>
+        <li><a href="./index.html" data-i18n="menu.inicio">Inicio</a></li>
+        <li><a href="./cortos.html" aria-current="page" data-i18n="menu.cortos">Cortos</a></li>
+        <li><a href="./proximamente.html" data-i18n="menu.proximamente">Próximamente</a></li>
+        <li><a href="./estudio.html" data-i18n="menu.estudio">Estudio</a></li>
+        <li><a href="./prensa.html" data-i18n="menu.prensa">Prensa</a></li>
+        <li><a href="./contacto.html" data-i18n="menu.contacto">Contacto</a></li>
       </ul>
     </nav>
   </header>
@@ -55,23 +76,71 @@
   <main id="contenido" tabindex="-1">
     <div class="contenedor">
       <div class="cabecera-pagina">
-        <h1>Cortos</h1>
-        <p class="pista-tactil">Toca un póster para ver sus datos. Tócalo otra vez para entrar.</p>
+        <h1 data-i18n="cortos.titulo">Cortos</h1>
+        <p class="pista-tactil" data-i18n="cortos.pistaTactil">Toca un póster para ver sus datos. Tócalo otra vez para entrar.</p>
       </div>
+
+      <!-- Buscador y filtros. Sin JavaScript no funcionarían, así que llevan hidden y
+           main.js los muestra. Filtran al momento y guardan su estado en la URL
+           (?q=&anio=&duracion=&orden=), para poder compartir una búsqueda. -->
+      <form class="filtros" id="filtros" role="search" aria-label="Buscar y filtrar cortos" data-i18n-aria-label="filtros.nombre" hidden>
+        <div class="filtros__campo filtros__campo--buscar">
+          <label for="filtro-texto" data-i18n="filtros.buscar">Buscar</label>
+          <input id="filtro-texto" name="q" type="search" autocomplete="off" placeholder="Título o sinopsis" data-i18n-placeholder="filtros.buscarPista">
+        </div>
+        <div class="filtros__campo">
+          <label for="filtro-anio" data-i18n="filtros.anio">Año</label>
+          <!-- main.js añade un año por cada año que tenga algún corto -->
+          <select id="filtro-anio" name="anio">
+            <option value="" data-i18n="filtros.todos">Todos</option>
+          </select>
+        </div>
+        <div class="filtros__campo">
+          <label for="filtro-duracion" data-i18n="filtros.duracion">Duración</label>
+          <select id="filtro-duracion" name="duracion">
+            <option value="" data-i18n="filtros.todas">Todas</option>
+            <option value="corto" data-i18n="filtros.corto">Corto (&lt; 10 min)</option>
+            <option value="medio" data-i18n="filtros.medio">Medio (10-20 min)</option>
+            <option value="largo" data-i18n="filtros.largo">Largo (&gt; 20 min)</option>
+          </select>
+        </div>
+        <div class="filtros__campo filtros__campo--orden">
+          <label for="filtro-orden" data-i18n="filtros.orden">Orden</label>
+          <select id="filtro-orden" name="orden">
+            <option value="recientes" data-i18n="filtros.recientes">Más recientes</option>
+            <option value="antiguos" data-i18n="filtros.antiguos">Más antiguos</option>
+            <option value="az" data-i18n="filtros.az">A-Z</option>
+          </select>
+        </div>
+      </form>
+      <!-- Número de resultados. role="status" hace que el lector de pantalla lo anuncie -->
+      <p class="filtros__resultado" id="filtros-resultado" role="status"></p>
 
       <!-- main.js genera aquí una tarjeta por cada corto de js/data.js -->
       <ul class="rejilla-cortos" id="lista-cortos"></ul>
       <noscript><p>Para ver el listado de cortos necesitas activar JavaScript.</p></noscript>
+
+      <!-- Mensaje cuando ningún corto pasa los filtros -->
+      <div class="sin-resultados" id="sin-resultados" hidden>
+        <p class="ficha-texto" data-i18n="filtros.consultado">Archivo consultado</p>
+        <h2 data-i18n="filtros.ninguna">Ninguna cinta responde a esa búsqueda.</h2>
+        <p class="texto-secundario" data-i18n="filtros.explicacion">
+          Hemos revisado todas las estanterías. O esa película nunca se rodó, o alguien
+          se ha tomado muchas molestias para que no la encuentres.
+        </p>
+        <button class="boton boton--secundario" type="button" id="limpiar-filtros" data-i18n="filtros.limpiar">Limpiar filtros</button>
+      </div>
     </div>
   </main>
 
   <footer class="pie">
     <div class="contenedor pie__interior">
       <p class="pie__marca">Dark Paradox Studios</p>
-      <nav class="pie__redes" aria-label="Redes y contacto">
+      <nav class="pie__redes" aria-label="Redes, contacto y prensa" data-i18n-aria-label="pie.redes">
         <a href="https://www.instagram.com/darkparadox_studios_/" target="_blank" rel="noopener noreferrer">Instagram</a>
         <a data-contacto="email" hidden>Email</a>
         <a data-contacto="whatsapp" target="_blank" rel="noopener noreferrer" hidden>WhatsApp</a>
+        <a href="./prensa.html" data-i18n="menu.prensa">Prensa</a>
       </nav>
       <p data-ciudad hidden></p>
       <p>© <span data-anio>2026</span> Dark Paradox Studios</p>
